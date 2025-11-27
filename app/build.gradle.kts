@@ -85,6 +85,8 @@ dependencies {
 
     // ADDED: Glide dependencies
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.firebase.crashlytics.buildtools)
     kapt("com.github.bumptech.glide:compiler:4.16.0")
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.3")
     implementation("com.airbnb.android:lottie:6.0.0")

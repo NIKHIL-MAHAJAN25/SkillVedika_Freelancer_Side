@@ -33,8 +33,8 @@ import kotlinx.coroutines.tasks.await
 class HomeActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityHomeBinding
-    private val auth = FirebaseAuth.getInstance()
-    private val db = Firebase.firestore
+    private val auth:FirebaseAuth=FirebaseAuth.getInstance()
+    private val db=Firebase.firestore
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

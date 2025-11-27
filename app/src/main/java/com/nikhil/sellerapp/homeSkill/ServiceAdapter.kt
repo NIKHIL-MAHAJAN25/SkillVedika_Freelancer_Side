@@ -30,7 +30,7 @@ class ServiceAdapter:ListAdapter<DataSkill, ServiceAdapter.ViewHolder>(ServiceDi
     }
 
     override fun onBindViewHolder(holder: ServiceAdapter.ViewHolder, position: Int) {
-     val service=getItem(position)
+        val service=getItem(position)
         holder.bind(service)
     }
 }

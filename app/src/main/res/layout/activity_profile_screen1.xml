@@ -189,16 +189,17 @@
         app:layout_constraintStart_toEndOf="@+id/vguide1"
         app:layout_constraintEnd_toStartOf="@+id/vguide2"
         app:layout_constraintTop_toBottomOf="@+id/phoneCard">
+
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
-            android:textColorHint="#495048"
-            app:hintTextColor="#698B6A"
             android:id="@+id/actoccup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="text"
             android:padding="20dp"
             android:textColor="#495048"
+            android:textColorHint="#495048"
             android:textSize="16sp"
-            android:inputType="text" />
+            app:hintTextColor="#698B6A" />
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardState"
