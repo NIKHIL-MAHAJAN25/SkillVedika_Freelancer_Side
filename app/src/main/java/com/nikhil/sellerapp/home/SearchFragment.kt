@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -124,7 +125,14 @@ class SearchFragment : Fragment() {
         }
     }
     private fun setup(){
-    serviceAdapter=ServiceAdapter()
+    serviceAdapter=ServiceAdapter{clciked->
+        val bundle=Bundle().apply {
+            putString("skill", clciked.title)
+        }
+        findNavController().navigate(
+            R.id.searchtoprojects,bundle
+        )
+    }
     binding.recyclerservices.apply {
         adapter=serviceAdapter
         }

@@ -6,7 +6,6 @@
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
     app:cardElevation="2dp"
-
     app:cardCornerRadius="16dp"
     app:strokeWidth="1dp"
     app:strokeColor="@color/bgdark">
@@ -71,19 +70,24 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
-        <!-- Skills Chip Group -->
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chipGroupSkills"
+        <HorizontalScrollView
+            android:id="@+id/scrollSkills"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            app:singleLine="true"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:scrollbars="none"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvDescription">
 
-            <!-- Skills will be added programmatically -->
-        </com.google.android.material.chip.ChipGroup>
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupSkills"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleLine="true"
+                app:chipSpacingHorizontal="8dp" />
+
+        </HorizontalScrollView>
 
         <!-- Divider -->
         <View
@@ -92,7 +96,7 @@
             android:layout_height="1dp"
             android:layout_marginTop="12dp"
             android:background="#E0E0E0"
-            app:layout_constraintTop_toBottomOf="@id/chipGroupSkills" />
+            app:layout_constraintTop_toBottomOf="@id/scrollSkills" />
 
         <!-- Client Info -->
         <TextView
@@ -109,20 +113,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider" />
 
-        <!-- Time Posted -->
-        <TextView
-            android:id="@+id/tvPostedTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="2 hours ago"
-            android:textColor="#757575"
-            android:textSize="12sp"
 
-            android:drawablePadding="4dp"
-            android:drawableTint="#757575"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tvClientName"
-            app:layout_constraintBottom_toBottomOf="@id/tvClientName" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

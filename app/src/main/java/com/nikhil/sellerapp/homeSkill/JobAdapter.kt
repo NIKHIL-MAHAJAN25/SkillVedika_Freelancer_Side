@@ -25,12 +25,12 @@ class JobAdapter (private val onJobClicked: (Project) -> Unit) : ListAdapter<Pro
                 tvClientName.text = "Posted by ${project.clientName}"
 
                 // 2. TIME AGO LOGIC (e.g., "2 hours ago")
-                val timeMillis = project.postedAt?.toDate()?.time ?: System.currentTimeMillis()
-                tvPostedTime.text = android.text.format.DateUtils.getRelativeTimeSpanString(
-                    timeMillis,
-                    System.currentTimeMillis(),
-                    android.text.format.DateUtils.MINUTE_IN_MILLIS
-                )
+//                val timeMillis = project.postedAt?.toDate()?.time ?: System.currentTimeMillis()
+//                tvPostedTime.text = android.text.format.DateUtils.getRelativeTimeSpanString(
+//                    timeMillis,
+//                    System.currentTimeMillis(),
+//                    android.text.format.DateUtils.MINUTE_IN_MILLIS
+//                )
 
                 // 3. STATUS CHIP COLORING
                 chipStatus.text = project.status

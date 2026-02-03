@@ -44,12 +44,22 @@
         android:id="@+id/search"
         android:name="com.nikhil.sellerapp.home.SearchFragment"
         android:label="searchfrag"
-        tools:layout="@layout/fragment_search"/>
+        tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/searchtoprojects"
+            app:destination="@+id/projectdisplay"
+        />
+    </fragment>
     <fragment
         android:id="@+id/addnewexp"
     android:name="com.nikhil.sellerapp.experience.AddExperience"
         android:label="addexp"
         tools:layout="@layout/fragment_add_experience"/>
+    <fragment
+        android:id="@+id/projectdisplay"
+        android:name="com.nikhil.sellerapp.servicemapping.ProjectDisplay"
+        android:label="projectdis"
+        tools:layout="@layout/fragment_project_display"/>
     <fragment
         android:id="@+id/addnewcert"
         android:name="com.nikhil.sellerapp.certificate.certificateFragment"

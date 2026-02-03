@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide
 import com.nikhil.sellerapp.R
 import com.nikhil.sellerapp.databinding.ServiceItemBinding
 
-class ServiceAdapter:ListAdapter<DataSkill, ServiceAdapter.ViewHolder>(ServiceDiffCallback()){
+class ServiceAdapter(private val onServiceClick:(DataSkill) -> Unit):ListAdapter<DataSkill, ServiceAdapter.ViewHolder>(ServiceDiffCallback()){
     inner class ViewHolder(private val binding: ServiceItemBinding):RecyclerView.ViewHolder(binding.root){
         fun bind(service:DataSkill){
             binding.serviceTitle.text=service.title
@@ -18,6 +18,9 @@ class ServiceAdapter:ListAdapter<DataSkill, ServiceAdapter.ViewHolder>(ServiceDi
                 .centerCrop()
                 .placeholder(R.drawable.ic_launcher_foreground)
                 .into(binding.serviceImage)
+            binding.root.setOnClickListener{
+                onServiceClick(service)
+            }
         }
     }
     override fun onCreateViewHolder(

@@ -35,6 +35,7 @@ class BasicFragment : Fragment() {
     private var param2: String? = null
     private val binding get()=_binding!!
     private val db=Firebase.firestore
+    private var flag: Boolean =false
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
     private val uid=auth.currentUser?.uid
     var userlist= arrayListOf<Certification>()
@@ -75,6 +76,9 @@ class BasicFragment : Fragment() {
         qlist.clear()
         startlisten()
         startlistencert()
+        binding.arrow.setOnClickListener {
+            flag=!flag
+        }
         binding.btnCertEdit.setOnClickListener {
             findNavController().navigate(R.id.prof_to_cert)
         }
