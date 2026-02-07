@@ -61,8 +61,9 @@ class BasicFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         adapterr= CertAdapter(userlist)
-        binding.recylercert.layoutManager=LinearLayoutManager(requireContext())
+        binding.recylercert.layoutManager=LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL,false)
         binding.recylercert.adapter=adapterr
         userlist.clear()
 
@@ -71,14 +72,13 @@ class BasicFragment : Fragment() {
 
 
         qadapter= QualAdapter(qlist)
-        binding.recylerqual.layoutManager=LinearLayoutManager(requireContext())
+        binding.recylerqual.layoutManager=LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.recylerqual.adapter=qadapter
+
         qlist.clear()
         startlisten()
         startlistencert()
-        binding.arrow.setOnClickListener {
-            flag=!flag
-        }
+
         binding.btnCertEdit.setOnClickListener {
             findNavController().navigate(R.id.prof_to_cert)
         }

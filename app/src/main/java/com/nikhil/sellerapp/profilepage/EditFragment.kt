@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
@@ -29,6 +30,19 @@ private const val ARG_PARAM2 = "param2"
  */
 class EditFragment : Fragment() {
     // TODO: Rename and change types of parameters
+    val developerList=listOf(
+        "Core Programming and Software Developer",
+        "Web and frontend development",
+        "Backend Development",
+        "Mobile App development",
+        "Database and Data Management",
+        "Cloud Engineering & DevOps",
+        "Product Design(UI/UX)",
+        "Agile Project and Product Management",
+        "Data Science and Machine Learning",
+
+
+    )
     private var _binding:FragmentEditBinding?=null
     private val auth:FirebaseAuth=FirebaseAuth.getInstance()
     private val uid=auth.currentUser?.uid
@@ -59,6 +73,7 @@ class EditFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        loadadapter()
         loadinfo()
         loadotherinfo()
         binding.btnSave.setOnClickListener {
@@ -84,6 +99,14 @@ class EditFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+    fun loadadapter()
+    {
+        val adapter = ArrayAdapter(requireContext(),R.layout.item_dropdown_interest,developerList)
+        binding.etprim.setAdapter(adapter)
+        binding.etprim.setOnClickListener {
+            binding.etprim.showDropDown()
+        }
     }
     private fun updateinfo(){
         if(uid!=null){

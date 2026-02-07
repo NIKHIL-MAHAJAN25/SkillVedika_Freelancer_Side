@@ -116,7 +116,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-
         android:hint="Primary skill"
         android:textColorHint="#495048"
         app:boxBackgroundColor="@color/bg"
@@ -124,7 +123,6 @@
         app:boxCornerRadiusBottomStart="10dp"
         app:boxCornerRadiusTopEnd="10dp"
         app:boxCornerRadiusTopStart="10dp"
-
         app:boxStrokeColor="@color/darkgreen"
         app:boxStrokeWidth="1dp"
 
@@ -133,14 +131,15 @@
         app:layout_constraintStart_toEndOf="@+id/vguide1"
         app:layout_constraintTop_toBottomOf="@+id/enroll">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etprim"
-            android:layout_width="match_parent"
+       <com.google.android.material.textfield.MaterialAutoCompleteTextView
+           android:id="@+id/etprim"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:paddingVertical="10dp"
+           android:paddingStart="12dp"
 
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:paddingVertical="10dp"
-            android:textColor="#495048" />
+
+           />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
