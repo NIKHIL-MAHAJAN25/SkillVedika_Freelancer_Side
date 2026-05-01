@@ -29,7 +29,7 @@ class adminadapter(val list:List<User>,val approveclick:(User)->Unit): RecyclerV
     }
 
     override fun getItemCount(): Int {
-        return
+        return list.size
     }
 
 }
