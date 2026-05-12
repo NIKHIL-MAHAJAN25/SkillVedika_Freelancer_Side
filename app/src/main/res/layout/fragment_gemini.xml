@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vguide1"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vguide2"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/hguide1"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <TextView
+        android:id="@+id/tvHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Resume AI Analyzer"
+        android:textColor="@color/darkgreen"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/vguide1"
+        app:layout_constraintTop_toBottomOf="@+id/hguide1" />
+
+    <TextView
+        android:id="@+id/lblJob"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Paste Job Description"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@+id/tvHeader"
+        app:layout_constraintStart_toEndOf="@id/vguide1" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layoutJob"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:hint="Job description"
+        app:placeholderText="Enter the Job description for which you are applying"
+        app:boxBackgroundColor="@color/bg"
+        app:boxStrokeColor="@color/darkgreen"
+        app:boxCornerRadiusTopStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:layout_constraintEnd_toStartOf="@+id/vguide2"
+        app:layout_constraintStart_toEndOf="@+id/vguide1"
+        app:layout_constraintTop_toBottomOf="@+id/lblJob">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etJobDesc"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:gravity="top|start"
+            android:inputType="textMultiLine"
+            android:textColor="#495048" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnUploadPdf"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:text="Upload Resume (PDF)"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/darkgreen"
+
+        app:iconTint="@color/darkgreen"
+        app:iconGravity="textStart"
+        android:backgroundTint="@color/bg"
+        app:strokeColor="@color/darkgreen"
+        app:strokeWidth="1dp"
+        app:cornerRadius="10dp"
+        app:layout_constraintStart_toEndOf="@id/vguide1"
+        app:layout_constraintEnd_toStartOf="@id/vguide2"
+        app:layout_constraintTop_toBottomOf="@id/layoutJob"/>
+
+    <TextView
+        android:id="@+id/tvFileName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="File Selected: Resume.pdf"
+        android:textColor="#495048"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@id/vguide1"
+        app:layout_constraintTop_toBottomOf="@id/btnUploadPdf"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAnalyze"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Analyze with AI"
+        android:padding="15dp"
+        android:layout_marginTop="18dp"
+        android:textColor="@color/white"
+        android:backgroundTint="#698B6A"
+        app:cornerRadius="10dp"
+        app:layout_constraintStart_toEndOf="@id/vguide1"
+        app:layout_constraintEnd_toStartOf="@id/vguide2"
+        app:layout_constraintTop_toBottomOf="@id/tvFileName"/>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:indeterminateTint="@color/darkgreen"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:id="@+id/resultLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/vguide2"
+        app:layout_constraintStart_toEndOf="@id/vguide1"
+        app:layout_constraintTop_toBottomOf="@id/btnAnalyze">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvScore"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Score: 85%"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="@color/darkgreen"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/tvFeedback"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Feedback here..."
+                android:textColor="@color/black"/>
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

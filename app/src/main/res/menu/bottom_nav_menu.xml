@@ -16,6 +16,11 @@
         android:title="orders"
         />
     <item
+        android:id="@+id/geminifragment"
+        android:icon="@drawable/aiiii"
+        android:title="AI"
+        />
+    <item
         android:id="@+id/profile"
         android:icon="@drawable/profile"
         android:title="Profile"/>

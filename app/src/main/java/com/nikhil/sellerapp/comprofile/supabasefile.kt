@@ -6,6 +6,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.firestoreSettings
 import com.nikhil.sellerapp.BuildConfig
+import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.storage.Storage
@@ -15,6 +16,7 @@ class supabasefile: Application() {
     lateinit var supabaseClient: SupabaseClient
     override fun onCreate() {
         super.onCreate()
+        PDFBoxResourceLoader.init(applicationContext)
         val settings = firestoreSettings {
             isPersistenceEnabled = true
         }

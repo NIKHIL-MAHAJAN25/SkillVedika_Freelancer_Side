@@ -57,6 +57,7 @@ class HomeActivity : AppCompatActivity() {
                 // List all the destinations where the bottom nav should be visible
                 R.id.search,
                 R.id.message,
+
                 R.id.order -> {
                     showBottomNav()
                 }

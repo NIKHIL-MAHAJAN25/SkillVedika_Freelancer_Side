@@ -51,6 +51,11 @@
         />
     </fragment>
     <fragment
+        android:id="@+id/geminifragment"
+        android:name="com.nikhil.sellerapp.home.GeminiFragment"
+        android:label="gemini"
+        tools:layout="@layout/fragment_gemini"/>
+    <fragment
         android:id="@+id/addnewexp"
     android:name="com.nikhil.sellerapp.experience.AddExperience"
         android:label="addexp"
