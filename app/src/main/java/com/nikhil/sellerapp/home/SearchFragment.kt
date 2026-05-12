@@ -69,15 +69,45 @@ class SearchFragment : Fragment() {
     // --- 1. SETUP UI ---
     private fun setupRecyclerView() {
         // Initialize Adapter with Click Listener
-        jobAdapter = JobAdapter { clickedProject ->
-            // Handle what happens when a Freelancer clicks a Job
-            // e.g., Navigate to Job Details Screen
-            Toast.makeText(context, "Clicked: ${clickedProject.title}", Toast.LENGTH_SHORT).show()
+        jobAdapter = JobAdapter(onContactClicked =  {  project ->
+           db.collection("Users").document(project.clientuid).get().addOnSuccessListener { doc->
+               Log.d("CLIENT_UID", project.clientuid)
 
-            // Example Navigation:
-            // val bundle = Bundle().apply { putString("projectId", clickedProject.projectId) }
-            // findNavController().navigate(R.id.action_search_to_details, bundle)
-        }
+               Log.d("DOC_EXISTS", doc.exists().toString())
+
+               Log.d("FULL_DOC", doc.data.toString())
+
+               Log.d("IMAGE_FIELD", doc.getString("profilePictureUrl").toString())
+               val image = doc.getString("profilePictureUrl")?:""
+
+               val bundle = Bundle().apply {
+
+                   putString("receiverUid", project.clientuid)
+
+                   putString("receiverName", project.clientName)
+
+                   putString("receiverImage", image)
+               }
+               findNavController().navigate(
+                   R.id.chatlist,
+                   bundle
+               )
+
+           }
+        },
+            onProfileClicked = { clientUid ->
+
+                val bundle = Bundle().apply {
+
+                    putString("uid", clientUid)
+                }
+
+//                findNavController().navigate(
+//                    R.id.clientProfileFragment,
+//                    bundle
+//                )
+            }
+        )
 
         binding.recyclerjobs.apply {
             adapter = jobAdapter

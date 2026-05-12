@@ -19,14 +19,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SellerApp"
         tools:targetApi="31">
-        <activity
-            android:name=".servicemapping.ProjectDisplay"
-            android:exported="false" />
+
         <activity
             android:name=".MainActivity2"
             android:exported="false" />
         <activity
             android:name=".home.HomeActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden"
             android:exported="false" />
         <activity
             android:name=".adminside.ApprovalScreen"
@@ -51,6 +50,7 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

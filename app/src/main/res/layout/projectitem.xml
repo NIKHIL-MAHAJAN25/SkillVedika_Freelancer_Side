@@ -7,7 +7,7 @@
     android:layout_margin="4dp"
     app:cardElevation="2dp"
     app:cardCornerRadius="16dp"
-
+    app:cardBackgroundColor="@color/bg"
     app:strokeColor="@android:color/transparent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -111,7 +111,27 @@
             android:drawablePadding="6dp"
             android:drawableTint="#757575"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider" />
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            app:layout_constraintBottom_toBottomOf="parent" />
+        <TextView
+            android:id="@+id/btncontact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Contact"
+            android:textColor="@color/darkgreen"
+            android:layout_marginRight="10dp"
+
+            android:textSize="13sp"
+            android:layout_marginTop="12dp"
+            android:clickable="true"
+            android:focusable="true"
+
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider"/>
 
 
 

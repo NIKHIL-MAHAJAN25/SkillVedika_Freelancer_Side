@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase
@@ -74,17 +75,45 @@ class ProjectDisplay : Fragment() {
 
     fun setuprecycler()
     {
-        projadapter= JobAdapter { clickedProject ->
-            // Handle what happens when a Freelancer clicks a Job
-            // e.g., Navigate to Job Details Screen
-            Toast.makeText(context, "Clicked: ${clickedProject.title}", Toast.LENGTH_SHORT).show()
-            showSnackbar("Showing:${clickedProject.category} projects")
+        projadapter= JobAdapter(onContactClicked =  {  project ->
+            db.collection("Users").document(project.clientuid).get().addOnSuccessListener { doc->
+                Log.d("CLIENT_UID", project.clientuid)
 
+                Log.d("DOC_EXISTS", doc.exists().toString())
 
-            // Example Navigation:
-            // val bundle = Bundle().apply { putString("projectId", clickedProject.projectId) }
-            // findNavController().navigate(R.id.action_search_to_details, bundle)
-        }
+                Log.d("FULL_DOC", doc.data.toString())
+
+                Log.d("IMAGE_FIELD", doc.getString("profilePictureUrl").toString())
+                val image = doc.getString("profilePictureUrl")?:""
+                val bundle = Bundle().apply {
+
+                    putString("receiverUid", project.clientuid)
+
+                    putString("receiverName", project.clientName)
+
+                    putString("receiverImage", image)
+                }
+                findNavController().navigate(
+                    R.id.chatlist,
+                    bundle
+                )
+
+            }
+        },
+            onProfileClicked = { clientUid ->
+
+                val bundle = Bundle().apply {
+
+                    putString("uid", clientUid)
+                }
+
+//                findNavController().navigate(
+//                    R.id.clientProfileFragment,
+//                    bundle
+//                )
+            }
+        )
+
         binding.recyclerquery.apply {
             adapter = projadapter
             layoutManager = LinearLayoutManager(requireContext()) // Vertical List

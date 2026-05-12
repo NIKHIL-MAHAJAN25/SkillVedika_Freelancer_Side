@@ -12,7 +12,7 @@ import com.nikhil.sellerapp.databinding.ProjectitemBinding
 import com.nikhil.sellerapp.dataclasses.Project
 import com.nikhil.sellerapp.dataclasses.ProjectStatus
 
-class JobAdapter (private val onJobClicked: (Project) -> Unit) : ListAdapter<Project, JobAdapter.ViewHolder>(JobDiffCallback) {
+class JobAdapter (private val onContactClicked: (Project) -> Unit, private val onProfileClicked: (String) -> Unit) : ListAdapter<Project, JobAdapter.ViewHolder>(JobDiffCallback) {
 
     // 1. THE FRAME BUILDER (ViewHolder)
     inner class ViewHolder(val binding:ProjectitemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -56,8 +56,14 @@ class JobAdapter (private val onJobClicked: (Project) -> Unit) : ListAdapter<Pro
                 }
 
                 // 5. CLICK LISTENER
-                root.setOnClickListener {
-                    onJobClicked(project)
+                btncontact.setOnClickListener {
+
+                    onContactClicked(project)
+                }
+
+                tvClientName.setOnClickListener {
+
+                    onProfileClicked(project.clientuid)
                 }
             }
         }

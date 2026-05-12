@@ -50,6 +50,10 @@
             app:destination="@+id/projectdisplay"
         />
     </fragment>
+    <fragment android:id="@+id/chatlist"
+        android:name="com.nikhil.sellerapp.Chatting.ChatInterface"
+        android:label="chatlist"
+        tools:layout="@layout/fragment_chat_interface"/>
     <fragment
         android:id="@+id/geminifragment"
         android:name="com.nikhil.sellerapp.home.GeminiFragment"
