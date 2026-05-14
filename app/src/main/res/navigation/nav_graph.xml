@@ -79,9 +79,9 @@
 
         <fragment
             android:id="@+id/message"
-            android:name="com.nikhil.sellerapp.home.MessgeFragment"
+            android:name="com.nikhil.sellerapp.home.ChatFragment"
             android:label="messagefrag"
-            tools:layout="@layout/fragment_messge" />
+            tools:layout="@layout/fragment_chat" />
 
 
 

@@ -89,10 +89,7 @@ class ChatFragment : Fragment() {
 
         Firebase.firestore.collection("Chat")
             .whereArrayContains("participants", uid)
-            .orderBy(
-                "lastMessageTime",
-                Query.Direction.DESCENDING
-            )
+
             .addSnapshotListener { value, error ->
 
                 if (error != null) return@addSnapshotListener
