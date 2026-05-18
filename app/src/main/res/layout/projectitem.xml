@@ -107,7 +107,8 @@
             android:text="Posted by John Doe"
             android:textColor="#424242"
             android:textSize="13sp"
-
+            android:clickable="true"
+            android:focusable="true"
             android:drawablePadding="6dp"
             android:drawableTint="#757575"
             app:layout_constraintStart_toStartOf="parent"

@@ -31,6 +31,11 @@
             app:destination="@+id/edit"/>
     </fragment>
     <fragment
+        android:id="@+id/ClientProfile"
+        android:name="com.nikhil.sellerapp.ClientProfileView.ClientProfileView"
+        tools:layout="@layout/fragment_client_profile_view"
+        android:label="ClientProfile"/>
+    <fragment
         android:id="@+id/edit"
         android:name="com.nikhil.sellerapp.profilepage.EditFragment"
         tools:layout="@layout/fragment_edit"

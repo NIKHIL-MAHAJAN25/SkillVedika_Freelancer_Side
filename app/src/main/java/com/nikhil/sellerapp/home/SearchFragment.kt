@@ -102,10 +102,10 @@ class SearchFragment : Fragment() {
                     putString("uid", clientUid)
                 }
 
-//                findNavController().navigate(
-//                    R.id.clientProfileFragment,
-//                    bundle
-//                )
+                findNavController().navigate(
+                    R.id.ClientProfile,
+                    bundle
+                )
             }
         )
 

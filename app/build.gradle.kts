@@ -67,6 +67,7 @@ android {
 }
 
 dependencies {
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
     // 1. PDF & Markdown Tools
     implementation("com.tom-roush:pdfbox-android:2.0.27.0")
     implementation("io.noties.markwon:core:4.6.2")
