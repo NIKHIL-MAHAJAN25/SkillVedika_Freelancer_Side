@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.google.firebase.Firebase
@@ -26,6 +27,8 @@ class ClientProfileView : Fragment() {
     private var userLoaded = false
     private var clientLoaded = false
 
+    private lateinit var reviewAdapter: ReviewAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         clientUid = arguments?.getString("uid")
@@ -42,14 +45,27 @@ class ClientProfileView : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setupReviewRecycler()
         binding.shimmerLayout.startShimmer()
+
         binding.AddReviews.setOnClickListener {
             val bundle = Bundle().apply {
                 putString("uid", clientUid)
             }
-            findNavController().navigate(R.id.addrev,bundle)
+            findNavController().navigate(R.id.addrev, bundle)
         }
+
         loadClientInfo()
+    }
+
+    private fun setupReviewRecycler() {
+        reviewAdapter = ReviewAdapter()
+        binding.rvRecentReviews.apply {
+            adapter = reviewAdapter
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL,false)
+            isNestedScrollingEnabled = false
+        }
     }
 
     private fun checkAndShowUI() {
@@ -76,6 +92,7 @@ class ClientProfileView : Fragment() {
 
                 updatePaymentChips(client?.paymentMethods ?: emptyList())
 
+                // RATING
                 val rating = client?.rating ?: 0.0
                 if (rating > 0) {
                     binding.tvRating.text = rating.toString()
@@ -84,12 +101,22 @@ class ClientProfileView : Fragment() {
                     binding.tvRating.visibility = View.GONE
                 }
 
-                val reviewCount = client?.reviews?.size ?: 0
-                if (reviewCount > 0) {
-                    binding.tvReviewCount.text = reviewCount.toString()
+                // REVIEWS
+                val reviews = client?.reviews ?: emptyList()
+                if (reviews.isNotEmpty()) {
+                    binding.tvReviewCount.text = reviews.size.toString()
                     binding.tvNoReviewscount.visibility = View.GONE
+
+                    val recentReviews = reviews
+                        .sortedByDescending { it.timestamp }
+                        .take(10)
+                    binding.rvRecentReviews.visibility = View.VISIBLE
+                    binding.emptyReviewsState.visibility = View.GONE
+                    reviewAdapter.submitList(recentReviews)
                 } else {
                     binding.tvReviewCount.visibility = View.GONE
+                    binding.rvRecentReviews.visibility = View.GONE
+                    binding.emptyReviewsState.visibility = View.VISIBLE
                 }
 
                 clientLoaded = true
