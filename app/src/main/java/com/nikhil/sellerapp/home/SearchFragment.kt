@@ -1,12 +1,17 @@
 package com.nikhil.sellerapp.home
 
+import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.Firebase
@@ -21,22 +26,19 @@ import com.nikhil.sellerapp.homeSkill.DataSkill
 import com.nikhil.sellerapp.homeSkill.JobAdapter
 import com.nikhil.sellerapp.homeSkill.ServiceAdapter
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [SearchFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class SearchFragment : Fragment() {
-    private var _binding:FragmentSearchBinding?=null
-    private val binding get()=_binding!!
+
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
+
     lateinit var serviceAdapter: ServiceAdapter
     private lateinit var jobAdapter: JobAdapter
-    private val db= Firebase.firestore
+    private lateinit var searchResultsAdapter: JobAdapter  // reusing JobAdapter for search results
+
+    private val db = Firebase.firestore
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
     private var param1: String? = null
     private var param2: String? = null
@@ -53,146 +55,217 @@ class SearchFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-       _binding=FragmentSearchBinding.inflate(inflater,container,false)
+    ): View {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         setup()
         setupRecyclerView()
+        setupSearchResultsRecyclerView()
         loadJobPostings()
         loadinfo()
-
+        setupSearch()
+        setupBackPress()
     }
-    // --- 1. SETUP UI ---
-    private fun setupRecyclerView() {
-        // Initialize Adapter with Click Listener
-        jobAdapter = JobAdapter(onContactClicked =  {  project ->
-           db.collection("Users").document(project.clientuid).get().addOnSuccessListener { doc->
-               Log.d("CLIENT_UID", project.clientuid)
 
-               Log.d("DOC_EXISTS", doc.exists().toString())
+    private fun setupBackPress() {
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (binding.rvSearchResults.visibility == View.VISIBLE) {
+                        binding.etSearch.text?.clear()
+                        toggleSearch(false)
+                        hideKeyboard()
+                    } else {
+                        isEnabled = false
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
+                    }
+                }
+            })
+    }
 
-               Log.d("FULL_DOC", doc.data.toString())
+    private fun setupSearch() {
+        binding.etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-               Log.d("IMAGE_FIELD", doc.getString("profilePictureUrl").toString())
-               val image = doc.getString("profilePictureUrl")?:""
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val query = s.toString().trim()
+                if (query.isNotEmpty()) {
+                    toggleSearch(true)
+                    performSkillSearch(query)
+                } else {
+                    toggleSearch(false)
+                }
+            }
 
-               val bundle = Bundle().apply {
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
-                   putString("receiverUid", project.clientuid)
+        binding.etSearch.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                hideKeyboard()
+                true
+            } else {
+                false
+            }
+        }
+    }
 
-                   putString("receiverName", project.clientName)
+    private fun performSkillSearch(query: String) {
+        // arrayContains does exact match on one element of the list.
+        // To support partial/case-insensitive matching, you'd need Algolia or store skills lowercased.
+        // This does exact match — works well if user picks from chip/autocomplete.
+        // For prefix-style typing, we search where any skill starts with the query using >= and <=.
+        // Since arrayContains doesn't support prefix, we use a workaround:
+        // fetch OPEN projects and filter client-side for partial match.
 
-                   putString("receiverImage", image)
-               }
-               findNavController().navigate(
-                   R.id.chatlist,
-                   bundle
-               )
+        db.collection("Projects")
+            .whereEqualTo("status", ProjectStatus.OPEN.name)
+            .get()
+            .addOnSuccessListener { snapshot ->
+                if (_binding == null) return@addOnSuccessListener
 
-           }
-        },
-            onProfileClicked = { clientUid ->
-
-                val bundle = Bundle().apply {
-
-                    putString("uid", clientUid)
+                if (snapshot.isEmpty) {
+                    searchResultsAdapter.submitList(emptyList())
+                    return@addOnSuccessListener
                 }
 
-                findNavController().navigate(
-                    R.id.ClientProfile,
-                    bundle
-                )
+                val lowerQuery = query.lowercase()
+
+                val filtered = snapshot.toObjects(Project::class.java).filter { project ->
+                    project.requiredSkills.any { skill ->
+                        skill.lowercase().contains(lowerQuery)
+                    }
+                }
+
+                searchResultsAdapter.submitList(filtered)
+            }
+            .addOnFailureListener { e ->
+                Log.e("SkillSearch", "Search failed", e)
+            }
+    }
+
+    private fun setupSearchResultsRecyclerView() {
+        searchResultsAdapter = JobAdapter(
+            onContactClicked = { project ->
+                db.collection("Users").document(project.clientuid).get()
+                    .addOnSuccessListener { doc ->
+                        val image = doc.getString("profilePictureUrl") ?: ""
+                        val bundle = Bundle().apply {
+                            putString("receiverUid", project.clientuid)
+                            putString("receiverName", project.clientName)
+                            putString("receiverImage", image)
+                        }
+                        findNavController().navigate(R.id.chatlist, bundle)
+                    }
+            },
+            onProfileClicked = { clientUid ->
+                val bundle = Bundle().apply { putString("uid", clientUid) }
+                findNavController().navigate(R.id.ClientProfile, bundle)
+            }
+        )
+
+        binding.rvSearchResults.apply {
+            adapter = searchResultsAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
+    }
+
+    private fun toggleSearch(isSearching: Boolean) {
+        if (isSearching) {
+            binding.homeContentGroup.visibility = View.GONE
+            binding.rvSearchResults.visibility = View.VISIBLE
+        } else {
+            binding.homeContentGroup.visibility = View.VISIBLE
+            binding.rvSearchResults.visibility = View.GONE
+        }
+    }
+
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
+    }
+
+    private fun setupRecyclerView() {
+        jobAdapter = JobAdapter(
+            onContactClicked = { project ->
+                db.collection("Users").document(project.clientuid).get()
+                    .addOnSuccessListener { doc ->
+                        Log.d("CLIENT_UID", project.clientuid)
+                        Log.d("DOC_EXISTS", doc.exists().toString())
+                        Log.d("FULL_DOC", doc.data.toString())
+                        Log.d("IMAGE_FIELD", doc.getString("profilePictureUrl").toString())
+                        val image = doc.getString("profilePictureUrl") ?: ""
+                        val bundle = Bundle().apply {
+                            putString("receiverUid", project.clientuid)
+                            putString("receiverName", project.clientName)
+                            putString("receiverImage", image)
+                        }
+                        findNavController().navigate(R.id.chatlist, bundle)
+                    }
+            },
+            onProfileClicked = { clientUid ->
+                val bundle = Bundle().apply { putString("uid", clientUid) }
+                findNavController().navigate(R.id.ClientProfile, bundle)
             }
         )
 
         binding.recyclerjobs.apply {
             adapter = jobAdapter
-            layoutManager = LinearLayoutManager(requireContext()) // Vertical List
-            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(requireContext())
+            isNestedScrollingEnabled = false
         }
     }
 
-    // --- 2. FETCH DATA (The Feed) ---
     private fun loadJobPostings() {
-        // Safety: Remove old listener to prevent duplicates
         firestoreListener?.remove()
 
-        // QUERY: "Give me all Projects where status is OPEN"
-        // We don't want "ASSIGNED" or "COMPLETED" jobs in the feed.
         val query = db.collection("Projects")
             .whereEqualTo("status", ProjectStatus.OPEN.name)
-        // Optional: Sort by newest first (Requires a Firestore Index)
-        // .orderBy("postedAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
 
         firestoreListener = query.addSnapshotListener { snapshot, error ->
-            // A. Error Handling
             if (error != null) {
                 Log.e("JobFeed", "Listen failed", error)
                 return@addSnapshotListener
             }
-
-            // B. Lifecycle Safety (Prevent Crash if view is gone)
             if (_binding == null) return@addSnapshotListener
 
-            // C. Process Data
             if (snapshot != null && !snapshot.isEmpty) {
-                val jobList = snapshot.toObjects(Project::class.java)
-                jobAdapter.submitList(jobList)
-
-                // Optional: Hide "Empty State" view if you have one
-                // binding.tvEmptyState.visibility = View.GONE
+                jobAdapter.submitList(snapshot.toObjects(Project::class.java))
             } else {
                 Log.d("JobFeed", "No open jobs found")
                 jobAdapter.submitList(emptyList())
+            }
+        }
+    }
 
-                // Optional: Show "No Jobs Available" text
-                // binding.tvEmptyState.visibility = View.VISIBLE
-            }
+    private fun setup() {
+        serviceAdapter = ServiceAdapter { clicked ->
+            val bundle = Bundle().apply { putString("skill", clicked.title) }
+            findNavController().navigate(R.id.searchtoprojects, bundle)
+        }
+        binding.recyclerservices.apply {
+            adapter = serviceAdapter
         }
     }
-    private fun setup(){
-    serviceAdapter=ServiceAdapter{clciked->
-        val bundle=Bundle().apply {
-            putString("skill", clciked.title)
-        }
-        findNavController().navigate(
-            R.id.searchtoprojects,bundle
-        )
-    }
-    binding.recyclerservices.apply {
-        adapter=serviceAdapter
-        }
-    }
-    private fun loadinfo(){
-        db.collection("Skills").addSnapshotListener{ snapshot,error ->
-            if(error!=null){
-                return@addSnapshotListener
-            }
-            if(snapshot!=null && !snapshot.isEmpty){
-                val skill=snapshot.toObjects(DataSkill::class.java)
-                serviceAdapter.submitList(skill)
-            }else{
-                Log.d("Firestore Info", "Current skills data: null or empty")
-                // If the collection is empty, submit an empty list to clear the UI.
+
+    private fun loadinfo() {
+        db.collection("Skills").addSnapshotListener { snapshot, error ->
+            if (error != null) return@addSnapshotListener
+            if (snapshot != null && !snapshot.isEmpty) {
+                serviceAdapter.submitList(snapshot.toObjects(DataSkill::class.java))
+            } else {
                 serviceAdapter.submitList(emptyList())
             }
         }
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment SearchFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             SearchFragment().apply {
@@ -205,6 +278,7 @@ class SearchFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding=null
+        firestoreListener?.remove()
+        _binding = null
     }
 }
