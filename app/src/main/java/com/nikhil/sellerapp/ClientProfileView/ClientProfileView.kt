@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.google.firebase.Firebase
@@ -42,6 +43,12 @@ class ClientProfileView : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.shimmerLayout.startShimmer()
+        binding.AddReviews.setOnClickListener {
+            val bundle = Bundle().apply {
+                putString("uid", clientUid)
+            }
+            findNavController().navigate(R.id.addrev,bundle)
+        }
         loadClientInfo()
     }
 

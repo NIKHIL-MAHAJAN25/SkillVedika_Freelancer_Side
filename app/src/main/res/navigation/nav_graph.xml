@@ -36,6 +36,11 @@
         tools:layout="@layout/fragment_client_profile_view"
         android:label="ClientProfile"/>
     <fragment
+        android:id="@+id/addrev"
+        android:name="com.nikhil.sellerapp.ClientProfileView.ReviewFragment"
+        tools:layout="@layout/fragment_review"
+        android:label="review"/>
+    <fragment
         android:id="@+id/edit"
         android:name="com.nikhil.sellerapp.profilepage.EditFragment"
         tools:layout="@layout/fragment_edit"
