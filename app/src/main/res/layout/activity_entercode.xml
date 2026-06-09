@@ -272,7 +272,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
-            android:text="Check Approval Status"
+            android:text="Resend Code"
             android:minWidth="0dp"
             android:minHeight="0dp"
             android:paddingStart="5dp"
