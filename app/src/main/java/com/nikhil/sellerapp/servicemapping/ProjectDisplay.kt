@@ -66,6 +66,7 @@ class ProjectDisplay : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         binding.title.text = skill
         setuprecycler()
 
@@ -108,10 +109,10 @@ class ProjectDisplay : Fragment() {
                     putString("uid", clientUid)
                 }
 
-//                findNavController().navigate(
-//                    R.id.clientProfileFragment,
-//                    bundle
-//                )
+                findNavController().navigate(
+                    R.id.ClientProfile,
+                    bundle
+                )
             }
         )
 

@@ -1,9 +1,11 @@
 package com.nikhil.sellerapp.ClientProfileView
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -162,10 +164,17 @@ class ClientProfileView : Fragment() {
         binding.emptyPaymentState.visibility = View.GONE
 
         methods.forEach { method ->
-            val chip = Chip(requireContext(), null, R.style.MyCustomChip)
-            chip.text = method
-            chip.isClickable = false
-            chip.isCheckable = false
+            val chip = Chip(requireContext(), null, R.style.MyCustomChip).apply {
+                text = method
+                isCloseIconVisible = false
+                isCheckable = false
+                typeface = android.graphics.Typeface.DEFAULT_BOLD
+                chipBackgroundColor = ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.bg)
+                )
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+            }
+
             binding.chipPaymentMethods.addView(chip)
         }
     }

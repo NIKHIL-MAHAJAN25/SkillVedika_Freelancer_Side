@@ -23,6 +23,7 @@ class OrderAdapter(private val onClicked: (Project) -> Unit,
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(project: Project) {
+
             binding.tvProjectTitle.text = project.title
             binding.tvDescription.text = project.description
             binding.tvFreelancerName.text = project.freename

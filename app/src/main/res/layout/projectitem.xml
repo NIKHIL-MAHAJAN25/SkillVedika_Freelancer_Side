@@ -157,6 +157,10 @@
                 app:layout_constraintBottom_toBottomOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+        <View
+            android:layout_width="4dp"
+            android:layout_height="match_parent"
+            android:background="#698B6A" />
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

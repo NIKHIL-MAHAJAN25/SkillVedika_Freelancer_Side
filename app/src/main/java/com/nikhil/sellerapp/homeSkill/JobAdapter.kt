@@ -1,5 +1,6 @@
 package com.nikhil.sellerapp.homeSkill
 
+import android.graphics.Paint
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import com.nikhil.sellerapp.R
 import com.nikhil.sellerapp.databinding.ProjectitemBinding
 import com.nikhil.sellerapp.dataclasses.Project
 import com.nikhil.sellerapp.dataclasses.ProjectStatus
+import kotlin.or
 
 class JobAdapter (private val onContactClicked: (Project) -> Unit, private val onProfileClicked: (String) -> Unit) : ListAdapter<Project, JobAdapter.ViewHolder>(JobDiffCallback) {
 
@@ -19,6 +21,8 @@ class JobAdapter (private val onContactClicked: (Project) -> Unit, private val o
 
         fun bind(project: Project) {
             binding.apply {
+                binding.tvClientName.paintFlags =
+                    binding.tvClientName.paintFlags or Paint.UNDERLINE_TEXT_FLAG
                 tvTitle.text = project.title
                 tvDescription.text = project.description
                 tvBudget.text = "₹${project.budget.toInt()}" // Format as currency
