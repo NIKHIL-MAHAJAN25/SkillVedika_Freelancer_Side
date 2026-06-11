@@ -9,9 +9,9 @@ import com.nikhil.sellerapp.databinding.ItemReviewCompactBinding
 import com.nikhil.sellerapp.databinding.ReviewItemClientBinding
 import com.nikhil.sellerapp.dataclasses.Review
 
-class ReviewAdapter : ListAdapter<Review, ReviewAdapter.ViewHolder>(ReviewDiffCallback()) {
+class ClientReviewAdapter: ListAdapter<Review, ClientReviewAdapter.ViewHolder>(ReviewDiffCallback()) {
 
-    inner class ViewHolder(private val binding: ItemReviewCompactBinding) :
+    inner class ViewHolder(private val binding: ReviewItemClientBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(review: Review) {
@@ -22,7 +22,7 @@ class ReviewAdapter : ListAdapter<Review, ReviewAdapter.ViewHolder>(ReviewDiffCa
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemReviewCompactBinding.inflate(
+        val binding = ReviewItemClientBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
         return ViewHolder(binding)

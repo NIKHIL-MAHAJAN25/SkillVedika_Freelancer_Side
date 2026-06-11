@@ -15,6 +15,7 @@ import com.nikhil.sellerapp.Chatting.ActiveChatsAdapter
 import com.nikhil.sellerapp.R
 import com.nikhil.sellerapp.databinding.FragmentChatBinding
 import com.nikhil.sellerapp.dataclasses.Chat
+import kotlin.collections.containsKey
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -47,6 +48,11 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.chatShimmer.startShimmer()
+
+        binding.chatShimmer.visibility = View.VISIBLE
+
+        binding.chatlist.visibility = View.GONE
 
         setupRecycler()
 
@@ -84,7 +90,6 @@ class ChatFragment : Fragment() {
     }
 
     private fun loadChats() {
-
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
         Firebase.firestore.collection("Chat")
@@ -95,48 +100,57 @@ class ChatFragment : Fragment() {
                 if (error != null) return@addSnapshotListener
 
                 val chats = value?.documents?.mapNotNull {
-
                     it.toObject(Chat::class.java)
-
+                }?.sortedByDescending {
+                    it.lastMessageTime
                 } ?: emptyList()
 
-                adapter.submitList(chats)
+                if (chats.isEmpty()) {
+                    binding.chatShimmer.stopShimmer()
+                    binding.chatShimmer.visibility = View.GONE
 
-                val userMap =
-                    mutableMapOf<String, Pair<String, String>>()
+                    binding.chatlist.visibility = View.VISIBLE
+                    adapter.submitList(emptyList())
+                    return@addSnapshotListener
+                }
+
+                val userMap = mutableMapOf<String, Pair<String, String>>()
+                var pending = 0
 
                 chats.forEach { chat ->
-
-                    val otherUserId =
-                        chat.participants.firstOrNull {
-                            it != uid
-                        }
-
-                    if (otherUserId != null) {
-
+                    val otherUserId = chat.participants.firstOrNull { it != uid }
+                    if (otherUserId != null && !userMap.containsKey(otherUserId)) {
+                        pending++
                         Firebase.firestore.collection("Users")
                             .document(otherUserId)
                             .get()
                             .addOnSuccessListener { userDoc ->
+                                val name = userDoc.getString("fullName") ?: ""
+                                val image = userDoc.getString("profilePictureUrl") ?: ""
+                                userMap[otherUserId] = Pair(name, image)
+                                pending--
+                                // Only submit once ALL user fetches are done
+                                if (pending == 0) {
+                                    adapter.setUserInfo(userMap)
+                                    adapter.submitList(ArrayList(chats))
+                                    binding.chatShimmer.stopShimmer()
 
-                                val name =
-                                    userDoc.getString("fullName")
-                                        ?: ""
+                                    binding.chatShimmer.visibility = View.GONE
 
-                                val image =
-                                    userDoc.getString("profilePictureUrl")
-                                        ?: ""
-
-                                userMap[otherUserId] =
-                                    Pair(name, image)
-
-                                adapter.setUserInfo(userMap)
+                                    binding.chatlist.visibility = View.VISIBLE
+                                }
+                            }
+                            .addOnFailureListener {
+                                pending--
+                                if (pending == 0) {
+                                    adapter.setUserInfo(userMap)
+                                    adapter.submitList(ArrayList(chats))
+                                }
                             }
                     }
                 }
             }
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
 

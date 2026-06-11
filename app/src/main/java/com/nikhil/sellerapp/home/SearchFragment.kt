@@ -12,6 +12,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.Firebase
@@ -25,6 +26,9 @@ import com.nikhil.sellerapp.dataclasses.ProjectStatus
 import com.nikhil.sellerapp.homeSkill.DataSkill
 import com.nikhil.sellerapp.homeSkill.JobAdapter
 import com.nikhil.sellerapp.homeSkill.ServiceAdapter
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -88,6 +92,7 @@ class SearchFragment : Fragment() {
                 }
             })
     }
+    private var searchJob: Job? = null
 
     private fun setupSearch() {
         binding.etSearch.addTextChangedListener(object : TextWatcher {
@@ -95,11 +100,15 @@ class SearchFragment : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val query = s.toString().trim()
-                if (query.isNotEmpty()) {
-                    toggleSearch(true)
-                    performSkillSearch(query)
-                } else {
-                    toggleSearch(false)
+                searchJob?.cancel()
+                searchJob = lifecycleScope.launch {
+                    delay(300)
+                    if (query.isNotEmpty()) {
+                        toggleSearch(true)
+                        performSkillSearch(query)
+                    } else {
+                        toggleSearch(false)
+                    }
                 }
             }
 

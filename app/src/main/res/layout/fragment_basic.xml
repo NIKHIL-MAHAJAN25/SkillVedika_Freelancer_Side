@@ -150,8 +150,9 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:clipToPadding="false"
-            app:layout_constraintStart_toEndOf="@+id/vguide1"
-            app:layout_constraintEnd_toStartOf="@+id/vguide2"
+            
+           app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvReviews"
             app:layout_constraintBottom_toTopOf="@+id/div5"/>
         <com.google.android.material.divider.MaterialDivider

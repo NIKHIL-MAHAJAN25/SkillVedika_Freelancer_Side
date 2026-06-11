@@ -4,138 +4,159 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
-    app:cardElevation="2dp"
+    android:layout_margin="5.5dp"
+    app:cardElevation="4dp"
     app:cardCornerRadius="16dp"
-    app:cardBackgroundColor="@color/bg"
-    app:strokeColor="@android:color/transparent">
+    app:cardBackgroundColor="@color/bgslight"
+    app:strokeWidth="0.5dp"
+    app:strokeColor="@color/darkgreen">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:orientation="horizontal">
 
-        <!-- Status Badge -->
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chipStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:text="Open"
-            android:textSize="12sp"
-            app:chipBackgroundColor="#E8F5E9"
-            app:chipStrokeWidth="0dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <!-- Left accent bar -->
+        <View
+            android:layout_width="4dp"
+            android:layout_height="match_parent"
+            android:background="#698B6A" />
 
-        <!-- Budget -->
-        <TextView
-            android:id="@+id/tvBudget"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="₹15,000"
-            android:textColor="#1976D2"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <!-- Project Title -->
-        <TextView
-            android:id="@+id/tvTitle"
+        <!-- Card content -->
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="E-commerce Android App"
-            android:textColor="#212121"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:maxLines="2"
-            android:ellipsize="end"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/chipStatus" />
+            android:layout_weight="1"
+            android:padding="14dp">
 
-        <!-- Description -->
-        <TextView
-            android:id="@+id/tvDescription"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Need experienced Android developer for e-commerce app with payment integration..."
-            android:textColor="#616161"
-            android:textSize="14sp"
-            android:maxLines="2"
-            android:ellipsize="end"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+            <!-- Status Badge -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:text="● Open"
+                android:textSize="11sp"
+                android:textColor="#3B6D11"
+                app:chipBackgroundColor="#E8F5E9"
+                app:chipStrokeWidth="0dp"
+                app:chipMinTouchTargetSize="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <HorizontalScrollView
-            android:id="@+id/scrollSkills"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:scrollbars="none"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvDescription">
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroupSkills"
+            <!-- Budget -->
+            <TextView
+                android:id="@+id/tvBudget"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:singleLine="true"
-                app:chipSpacingHorizontal="8dp" />
+                android:text="Budget ₹15,000"
+                android:textColor="#698B6A"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </HorizontalScrollView>
+            <!-- Title -->
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="E-commerce Android App"
+                android:textColor="#212121"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:maxLines="2"
+                android:ellipsize="end"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/chipStatus" />
 
-        <!-- Divider -->
-        <View
-            android:id="@+id/divider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="12dp"
-            android:background="#E0E0E0"
-            app:layout_constraintTop_toBottomOf="@id/scrollSkills" />
+            <!-- Description -->
+            <TextView
+                android:id="@+id/tvDescription"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Need an experienced Android developer for e-commerce app with payment integration..."
+                android:textColor="#757575"
+                android:textSize="13sp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
-        <!-- Client Info -->
-        <TextView
-            android:id="@+id/tvClientName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Posted by John Doe"
-            android:textColor="#424242"
-            android:textSize="13sp"
-            android:clickable="true"
-            android:focusable="true"
-            android:drawablePadding="6dp"
-            android:drawableTint="#757575"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider"
-            app:layout_constraintBottom_toBottomOf="parent" />
-        <TextView
-            android:id="@+id/btncontact"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            <!-- Skills chips -->
+            <HorizontalScrollView
+                android:id="@+id/scrollSkills"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:scrollbars="none"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvDescription">
 
-            android:text="Contact"
-            android:textColor="@color/darkgreen"
-            android:layout_marginRight="10dp"
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupSkills"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleLine="true"
+                    app:chipSpacingHorizontal="6dp" />
 
-            android:textSize="13sp"
-            android:layout_marginTop="12dp"
-            android:clickable="true"
-            android:focusable="true"
+            </HorizontalScrollView>
 
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-
-
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider"/>
+            <!-- Divider -->
+            <View
+                android:id="@+id/divider"
+                android:layout_width="0dp"
+                android:layout_height="0.5dp"
+                android:layout_marginTop="10dp"
+                android:background="#E0E0E0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/scrollSkills" />
 
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <!-- Posted by -->
+            <TextView
+                android:id="@+id/tvClientName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="3dp"
+                android:text="James Doe · 2h ago"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btncontact" />
+
+            <!-- Contact Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btncontact"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:text="Contact"
+                android:textSize="12sp"
+                android:textColor="#698B6A"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:layout_marginTop="10dp"
+                app:cornerRadius="20dp"
+                app:strokeColor="#698B6A"
+                app:strokeWidth="1dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

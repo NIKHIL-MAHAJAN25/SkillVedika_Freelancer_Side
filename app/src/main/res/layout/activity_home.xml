@@ -21,6 +21,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:layout_marginBottom="0dp"
+
+
         android:background="@drawable/bottom_style"
         app:itemActiveIndicatorStyle="@color/bg"
         app:itemRippleColor="@color/white"

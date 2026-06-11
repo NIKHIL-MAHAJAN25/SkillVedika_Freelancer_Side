@@ -27,7 +27,7 @@ class ClientProfileView : Fragment() {
     private var userLoaded = false
     private var clientLoaded = false
 
-    private lateinit var reviewAdapter: ReviewAdapter
+    private lateinit var reviewAdapter: ClientReviewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +60,7 @@ class ClientProfileView : Fragment() {
     }
 
     private fun setupReviewRecycler() {
-        reviewAdapter = ReviewAdapter()
+        reviewAdapter = ClientReviewAdapter()
         binding.rvRecentReviews.apply {
             adapter = reviewAdapter
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL,false)
