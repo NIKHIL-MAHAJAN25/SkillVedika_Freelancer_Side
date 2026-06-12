@@ -38,6 +38,7 @@ class LoginActivity : AppCompatActivity() {
         val opsswrd = "nikhil1234"
         binding.alrsignup.setOnClickListener {
             startActivity(Intent(this,SignUpActivity2::class.java))
+            finish()
         }
 
         binding.btnSignin.setOnClickListener {

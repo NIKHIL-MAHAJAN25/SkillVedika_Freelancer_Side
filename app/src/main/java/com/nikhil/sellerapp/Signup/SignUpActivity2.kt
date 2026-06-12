@@ -37,6 +37,7 @@ class SignUpActivity2 : AppCompatActivity() {
         }
         binding.alrsignin.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
+            finish()
         }
         binding.btnSignUP.setOnClickListener {
             val aemail=binding.etmailsignin2.text.toString()
