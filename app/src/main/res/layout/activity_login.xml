@@ -68,6 +68,8 @@
         android:hint="Email"
         app:boxStrokeWidth="0dp"
         android:layout_marginTop="30dp"
+        app:hintTextColor="#698B6A"
+        app:boxStrokeColor="#698B6A"
         app:boxCornerRadiusTopStart="40dp"
         app:boxCornerRadiusTopEnd="40dp"
         app:boxCornerRadiusBottomStart="40dp"
@@ -82,7 +84,7 @@
             android:paddingVertical="20dp"
 
             android:layout_width="match_parent"
-            android:textColor="#495048"
+            android:textColor="@color/black"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
             />
@@ -92,6 +94,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Password"
+        app:hintTextColor="#698B6A"
+        app:boxStrokeColor="#698B6A"
         app:boxStrokeWidth="0dp"
         android:textColorHint="#495048"
         android:layout_marginTop="30dp"
@@ -108,9 +112,9 @@
             android:id="@+id/etpsswrdsignin2"
             android:paddingVertical="20dp"
             android:layout_width="match_parent"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
+            android:inputType="textPassword"
             />
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.button.MaterialButton

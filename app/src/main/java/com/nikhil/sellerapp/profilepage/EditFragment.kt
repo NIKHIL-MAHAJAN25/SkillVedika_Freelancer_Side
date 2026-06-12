@@ -31,14 +31,14 @@ private const val ARG_PARAM2 = "param2"
 class EditFragment : Fragment() {
     // TODO: Rename and change types of parameters
     val developerList=listOf(
-        "Core Programming and Software Developer",
-        "Web and frontend development",
+        "Core Programming Software Development",
+        "Frontend Development",
         "Backend Development",
         "Mobile App development",
         "Database and Data Management",
-        "Cloud Engineering & DevOps",
-        "Product Design(UI/UX)",
-        "Agile Project and Product Management",
+        "Cloud and DevOps",
+        "Product Design (UI/UX)",
+        "Project Management & Methodologies",
         "Data Science and Machine Learning",
 
 

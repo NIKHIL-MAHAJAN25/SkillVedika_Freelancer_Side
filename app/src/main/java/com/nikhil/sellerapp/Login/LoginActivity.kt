@@ -12,6 +12,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 import com.nikhil.sellerapp.R
+import com.nikhil.sellerapp.Signup.SignUpActivity2
 import com.nikhil.sellerapp.adminside.ApprovalScreen
 import com.nikhil.sellerapp.comprofile.Entercode
 import com.nikhil.sellerapp.comprofile.ProfileScreen1
@@ -35,6 +36,9 @@ class LoginActivity : AppCompatActivity() {
         }
         val oemail = "Nikhilmahajan8787@gmail.com"
         val opsswrd = "nikhil1234"
+        binding.alrsignup.setOnClickListener {
+            startActivity(Intent(this,SignUpActivity2::class.java))
+        }
 
         binding.btnSignin.setOnClickListener {
             val aemail = binding.etmailsignin2.text.toString()
