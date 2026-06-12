@@ -16,6 +16,8 @@ import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -40,9 +42,15 @@ class ProfileScreen1 : AppCompatActivity() {
     lateinit var binding: ActivityProfileScreen1Binding
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     val db= Firebase.firestore
-    private val PICK_IMAGE_REQUEST = 1
-    private val PERMISSION_REQUEST_CODE = 100
-    private val MANAGE_EXTERNAL_STORAGE_REQUEST_CODE = 101
+    private val pickImageLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.PickVisualMedia()
+        ) { uri ->
+
+            if (uri != null) {
+                uploadImageToSupabase(uri)
+            }
+        }
     private lateinit var supabaseClient: SupabaseClient
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,7 +84,12 @@ class ProfileScreen1 : AppCompatActivity() {
         }
         supabaseClient=(this.application as supabasefile).supabaseClient
         binding.profileImage2.setOnClickListener {
-            checkPermission()
+
+            pickImageLauncher.launch(
+                PickVisualMediaRequest(
+                    ActivityResultContracts.PickVisualMedia.ImageOnly
+                )
+            )
         }
         binding.btnNext.setOnClickListener {
 
@@ -103,61 +116,27 @@ class ProfileScreen1 : AppCompatActivity() {
 
         }
     }
-    private fun checkPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.READ_MEDIA_IMAGES
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestPermissions(
-                    arrayOf(Manifest.permission.READ_MEDIA_IMAGES),
-                    PERMISSION_REQUEST_CODE
-                )
-            } else {
-                pickImage()
-            }
-        } else {
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestPermissions(
-                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                    PERMISSION_REQUEST_CODE
-                )
-            } else {
-                pickImage()
-            }
-        }
-    }
 
-    private fun requestManage() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // For Android 11 (API level 30) and above
-            try {
-                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                startActivityForResult(intent, PERMISSION_REQUEST_CODE)
-            } catch (e: ActivityNotFoundException) {
-                // Handle the case where the intent is not available (maybe the device is on a lower version)
-                Log.e("PermissionRequest", "Activity not found for the permission intent.")
-            }
-        } else {
-            // Handle this case for older Android versions (below Android 11)
-            Log.e("PermissionRequest", "The permission is only available on Android 11 (API level 30) and above.")
-        }
-//        // Request the user to open settings to allow full access
-//        val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-//        startActivityForResult(intent, MANAGE_EXTERNAL_STORAGE_REQUEST_CODE)
-    }
-    private fun pickImage(){
-        val intent= Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent,PICK_IMAGE_REQUEST)
-    }
+
+
+
 
     private fun uploadImageToSupabase(uri: Uri) {
+
         val byteArray = uriToByteArray(this, uri)
+
+        if (byteArray.size > 5 * 1024 * 1024) {
+
+            Toast.makeText(
+                this,
+                "Image must be under 5 MB",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            return
+        }
+
+        binding.profileImage2.isEnabled = false
         val fileName = "uploads/${System.currentTimeMillis()}.jpg"
 
         val bucket = supabaseClient.storage.from("sample") // Choose your bucket name
@@ -173,16 +152,14 @@ class ProfileScreen1 : AppCompatActivity() {
 //                                val progress = (status.totalBytesSent.toFloat() / status.contentLength * 100)
                                 Log.d("Upload", "Progress%")
                             }
+
                             is UploadStatus.Success -> {
+
+                                binding.profileImage2.isEnabled = true
+
                                 Log.d("Upload ", "Upload Success")
+
                                 handleUploadSuccess(bucket, fileName)
-
-
-
-
-
-
-
                             }
 
                         }
@@ -190,53 +167,31 @@ class ProfileScreen1 : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
+                    binding.profileImage2.isEnabled = true
+
                     Log.e("Upload", "Error uploading image: ${e.message}")
 
                 }
             }
         }
     }
-    private fun uriToByteArray(context: Context, uri: Uri): ByteArray {
-        val inputStream = context.contentResolver.openInputStream(uri)
-        return inputStream?.readBytes() ?: ByteArray(0)
+    private fun uriToByteArray(
+        context: Context,
+        uri: Uri
+    ): ByteArray {
+
+        return context.contentResolver
+            .openInputStream(uri)
+            ?.use {
+                it.readBytes()
+            }
+            ?: throw Exception("Unable to read image")
     }
-    @RequiresApi(Build.VERSION_CODES.R)
 
 
-    override fun onRequestPermissionsResult(requestCode: Int,
-                                            permissions: Array<String>,
-                                            grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            PERMISSION_REQUEST_CODE -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission granted, proceed with file operations
-                    Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show()
-                    pickImage()
-                } else {
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
-                }
-            }
-            MANAGE_EXTERNAL_STORAGE_REQUEST_CODE -> {
-                if (Environment.isExternalStorageManager()) {
-                    // The user granted permission for full access
-                    Toast.makeText(this, "Full storage access granted", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this, "Storage permission not granted", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode == Activity.RESULT_OK && requestCode == PICK_IMAGE_REQUEST) {
-            data?.data?.let { uri ->
-                // Handle the selected image (upload it to Supabase)
-                uploadImageToSupabase(uri)
-            }
-        }
-    }
+
+
     private fun handleUploadSuccess(bucket: Any, fileName: String) {
         try {
             val imageUrl = supabaseClient.storage.from("sample").publicUrl(fileName)

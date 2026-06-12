@@ -14,6 +14,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 
 
 import com.google.firebase.Firebase
@@ -76,6 +80,31 @@ class ChatInterface : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loge("$receiverImage")
+        val window = requireActivity().window
+
+        // 1. Make status bar transparent so toolbar color shows through
+        window.statusBarColor = android.graphics.Color.TRANSPARENT
+
+        // 2. White status bar icons (since dark green bg)
+        // false means light icons (for dark backgrounds), true means dark icons (for light backgrounds)
+        val windowController = WindowCompat.getInsetsController(window, view)
+        windowController.isAppearanceLightStatusBars = false
+
+        // 3. Pad the toolbar by status bar height so content doesn't go under icons
+        ViewCompat.setOnApplyWindowInsetsListener(binding.topHeader) { v, insets ->
+            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            // Explicitly set bottom padding to 0 so we don't accidentally inherit extra space
+            v.updatePadding(top = statusBarHeight, bottom = 0)
+            insets
+        }
+
+        // Bottom input moves with keyboard
+        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomInputLayout) { v, windowInsets ->
+            val imeInsets = windowInsets.getInsets(WindowInsetsCompat.Type.ime())
+            val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(v.paddingLeft, v.paddingTop, v.paddingRight, maxOf(imeInsets.bottom, systemBars.bottom))
+            windowInsets
+        }
         setupinfo()
         setupRecycler()
         listenForMessages()
