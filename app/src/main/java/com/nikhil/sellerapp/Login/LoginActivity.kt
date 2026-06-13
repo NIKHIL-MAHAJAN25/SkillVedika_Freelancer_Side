@@ -34,8 +34,7 @@ class LoginActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val oemail = "Nikhilmahajan8787@gmail.com"
-        val opsswrd = "nikhil1234"
+
         binding.alrsignup.setOnClickListener {
             startActivity(Intent(this,SignUpActivity2::class.java))
             finish()
@@ -48,14 +47,8 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this, "Enter email & password", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            //admin
-            if (aemail.lowercase() == oemail.lowercase() && psswrd == opsswrd)
-            {
-                Toast.makeText(this, "Welcome", Toast.LENGTH_SHORT)
-                startActivity(Intent(this, ApprovalScreen::class.java))
-            }
-            //admin
-            else if(aemail!=oemail){
+
+            else{
                 auth.signInWithEmailAndPassword(aemail,psswrd).addOnSuccessListener {
                     val auid=auth.currentUser?.uid
                     if (auid != null) {
@@ -107,9 +100,7 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(this,"check credentials again",Toast.LENGTH_SHORT).show()
                 }
             }
-            else{
-                Toast.makeText(this, "Not Welcome", Toast.LENGTH_SHORT)
-            }
+
         }
     }
 }

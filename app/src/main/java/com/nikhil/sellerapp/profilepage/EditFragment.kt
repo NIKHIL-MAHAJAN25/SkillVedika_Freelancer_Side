@@ -76,6 +76,9 @@ class EditFragment : Fragment() {
         loadadapter()
         loadinfo()
         loadotherinfo()
+        binding.tvprim.setOnClickListener {
+            binding.etprim.showDropDown()
+        }
         binding.btnSave.setOnClickListener {
             updateinfo()
         }
@@ -113,6 +116,10 @@ class EditFragment : Fragment() {
             val name=binding.etname.text.toString()
             val bio=binding.etdesc.text.toString()
             val primskill=binding.etprim.text.toString()
+            if (!developerList.contains(primskill)) {
+                binding.etprim.error = "Please select a skill from the list"
+                return
+            }
             val rate=binding.etproject.text.toString()
             val rated=rate.toDoubleOrNull()?:0.0
             val freelancer= mapOf(

@@ -3,6 +3,7 @@ package com.nikhil.sellerapp.comprofile
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +16,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 import com.nikhil.sellerapp.R
 import com.nikhil.sellerapp.databinding.ActivityProfileScreen2Binding
+import com.nikhil.sellerapp.mailretro.ApiResponse
+import com.nikhil.sellerapp.mailretro.Retromail
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import kotlin.random.Random
 
 class ProfileScreen2 : AppCompatActivity() {
     lateinit var binding: ActivityProfileScreen2Binding
@@ -54,18 +61,19 @@ class ProfileScreen2 : AppCompatActivity() {
         binding.btnNext.setOnClickListener {
             savedata()
             startActivity(Intent(this,Entercode::class.java))
+            finish()
         }
     }
-    private fun savedata(){
-        val biotext=binding.etBio.text.toString()
+    private fun savedata() {
+        val biotext = binding.etBio.text.toString()
         if (biotext.isEmpty()) {
             Toast.makeText(this, "Please enter your bio", Toast.LENGTH_SHORT).show()
             return
         }
-        val selected= mutableListOf<String>()
-        for(i in 0 until binding.chipGroupLang.childCount){
-            val chip=binding.chipGroupLang.getChildAt(i) as Chip
-            if(chip.isChecked){
+        val selected = mutableListOf<String>()
+        for (i in 0 until binding.chipGroupLang.childCount) {
+            val chip = binding.chipGroupLang.getChildAt(i) as Chip
+            if (chip.isChecked) {
                 selected.add(chip.text.toString())
             }
         }
@@ -74,23 +82,31 @@ class ProfileScreen2 : AppCompatActivity() {
             return
         }
 
-        val user= mapOf(
-            "bio" to biotext,
-            "language" to selected,
-            "profilecomplete" to true,
-            "approved" to false
-        )
-        val uid=auth.currentUser?.uid
+        generate { code ->
+            val user = mapOf(
+                "bio" to biotext,
+                "language" to selected,
+                "profilecomplete" to true,
+                "approved" to false,
+                "approvalCode" to code
+            )
+            val uid = auth.currentUser?.uid
 
-        if (uid != null) {
-            db.collection("Users").document(uid).update(user).addOnSuccessListener {
-                Toast.makeText(this, "Profile updated!", Toast.LENGTH_SHORT).show()
-            }
-                .addOnFailureListener { e ->
-                    Toast.makeText(this, "Failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            if (uid != null) {
+                db.collection("Users").document(uid).update(user).addOnSuccessListener {
+                    fetchmail(uid){mail->
+                        if (mail != null) {
+                            sendOtp(mail,code.toString())
+                        }
+                    }
+                    Toast.makeText(this, "Profile updated! Security code sent Check your mail", Toast.LENGTH_SHORT).show()
                 }
-        } else {
-            Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show()
+                    .addOnFailureListener { e ->
+                        Toast.makeText(this, "Failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+            } else {
+                Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show()
+            }
         }
     }
     private fun populate() {
@@ -110,4 +126,47 @@ class ProfileScreen2 : AppCompatActivity() {
             binding.chipGroupLang.addView(chip)
         }
     }
+    private fun fetchmail(uid:String,onResult: (String?) -> Unit)
+    {
+        if(uid!=null)
+        {
+            db.collection("Users").document(uid).get().addOnSuccessListener { document->
+                if(document.exists() && document!=null)
+                {
+                    val number=document.getString("email")
+                    onResult(number)
+                }
+            }
+        }else{
+            onResult(null)
+        }
+    }
+    private fun generate(onResult: (Int?)->Unit)
+    {
+        val random= Random.nextInt(100000,999999)
+        onResult(random)
+    }
+    fun sendOtp(email:String,otp:String)
+    {
+        val data= mapOf("email" to email,"otp" to otp)
+        Retromail.instance.sendOtp(data).enqueue(object :Callback<ApiResponse>
+        {
+            override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
+                val res=response.body()
+                val msg=res?.message ?: "Unexpected response"
+                Log.e("mail","mail sent")
+                Toast.makeText(this@ProfileScreen2, msg, Toast.LENGTH_SHORT).show()
+
+            }
+
+            override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+                Log.e("mail","mail not sent")
+
+                Toast.makeText(this@ProfileScreen2, "Failed: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+
+        })
+
+    }
+
 }
