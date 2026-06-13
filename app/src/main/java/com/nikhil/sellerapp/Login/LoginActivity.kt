@@ -12,6 +12,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 import com.nikhil.sellerapp.R
+import com.nikhil.sellerapp.Signup.SignUpActivity
 import com.nikhil.sellerapp.Signup.SignUpActivity2
 import com.nikhil.sellerapp.adminside.ApprovalScreen
 import com.nikhil.sellerapp.comprofile.Entercode
@@ -56,7 +57,17 @@ class LoginActivity : AppCompatActivity() {
                             if (document != null && document.exists()) {
                                 val filestatus = document.getBoolean("profilecomplete" )
                                 val appstatus = document.getBoolean("approved")
+                                val userole = document.getString("userole")
                                 when {
+                                    userole!="FREELANCER"->{
+                                        FirebaseAuth.getInstance().signOut()
+                                        Toast.makeText(
+                                            this,
+                                            "Account already exists as a Client",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        startActivity(Intent(this, SignUpActivity::class.java))
+                                    }
                                     !filestatus!! && !appstatus!! -> {
                                         Toast.makeText(
                                             this,
