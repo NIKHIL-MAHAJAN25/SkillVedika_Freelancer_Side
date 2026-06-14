@@ -9,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.nikhil.sellerapp.Chatting.ActiveChatsAdapter
@@ -34,6 +35,7 @@ class ChatFragment : Fragment() {
     private var _binding: FragmentChatBinding? = null
 
     val binding get() = _binding!!
+    private var chatsListener: ListenerRegistration? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -97,8 +99,7 @@ class ChatFragment : Fragment() {
 
             .addSnapshotListener { value, error ->
 
-                if (error != null) return@addSnapshotListener
-
+                if (error != null || _binding == null) return@addSnapshotListener
                 val chats = value?.documents?.mapNotNull {
                     it.toObject(Chat::class.java)
                 }?.sortedByDescending {
@@ -133,11 +134,11 @@ class ChatFragment : Fragment() {
                                 if (pending == 0) {
                                     adapter.setUserInfo(userMap)
                                     adapter.submitList(ArrayList(chats))
-                                    binding.chatShimmer.stopShimmer()
-
-                                    binding.chatShimmer.visibility = View.GONE
-
-                                    binding.chatlist.visibility = View.VISIBLE
+                                    _binding?.let {
+                                        it.chatShimmer.stopShimmer()
+                                        it.chatShimmer.visibility = View.GONE
+                                        it.chatlist.visibility = View.VISIBLE
+                                    }
                                 }
                             }
                             .addOnFailureListener {
@@ -145,6 +146,11 @@ class ChatFragment : Fragment() {
                                 if (pending == 0) {
                                     adapter.setUserInfo(userMap)
                                     adapter.submitList(ArrayList(chats))
+                                    _binding?.let {
+                                        it.chatShimmer.stopShimmer()
+                                        it.chatShimmer.visibility = View.GONE
+                                        it.chatlist.visibility = View.VISIBLE
+                                    }
                                 }
                             }
                     }
@@ -153,6 +159,8 @@ class ChatFragment : Fragment() {
     }
     override fun onDestroyView() {
         super.onDestroyView()
+        chatsListener?.remove()
+        chatsListener = null
 
         _binding = null
     }

@@ -171,6 +171,23 @@ class OrderFragment : Fragment() {
         )
         Log.d("APPLY_FILTER", "tab=$tabPosition status=$status projects=${allProjects.map { it.status }}")
         adapter.submitList(filtered)
+        if (filtered.isEmpty()) {
+            val (title, sub) = when (tabPosition) {
+                0 -> Pair("No Active Orders", "Contact Clients to get Started")
+                1 -> Pair("No Completed Projects", "Finish your assigned work to see it here")
+                2 -> Pair("No Cancelled Projects", "Hope it stays that way!")
+                else -> Pair("No Orders Yet", "Contact Clients to get Started")
+            }
+            binding.tvEmpty.text = title
+            binding.tvEmptySub.text = sub
+            binding.tvEmpty.visibility = View.VISIBLE
+            binding.tvEmptySub.visibility = View.VISIBLE
+            binding.projectrecycler.visibility = View.GONE
+        } else {
+            binding.tvEmpty.visibility = View.GONE
+            binding.tvEmptySub.visibility = View.GONE
+            binding.projectrecycler.visibility = View.VISIBLE
+        }
     }
 
     // ---------------------------------------------------

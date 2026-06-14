@@ -108,7 +108,7 @@ class LoginActivity : AppCompatActivity() {
                         }
                     }
                 }.addOnFailureListener {
-                    Toast.makeText(this,"check credentials again",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,"check credentials again Or account doesn't exist",Toast.LENGTH_SHORT).show()
                 }
             }
 
