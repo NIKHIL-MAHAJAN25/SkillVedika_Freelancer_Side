@@ -124,6 +124,7 @@
             app:layout_constraintStart_toStartOf="@+id/chipskills"
             app:layout_constraintTop_toBottomOf="@+id/profileImage" />
 
+
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipskills"
             android:layout_width="wrap_content"

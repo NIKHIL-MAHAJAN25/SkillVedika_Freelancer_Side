@@ -18,6 +18,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.navigation.fragment.findNavController
 
 
 import com.google.firebase.Firebase
@@ -108,6 +109,24 @@ class ChatInterface : Fragment() {
         setupinfo()
         setupRecycler()
         listenForMessages()
+        binding.tvName.setOnClickListener {
+            val bundle = Bundle().apply{
+                putString("uid", receiverUid)
+
+            }
+            findNavController().navigate(
+                R.id.ClientProfile,bundle
+            )
+        }
+        binding.ivProfileImage.setOnClickListener {
+            val bundle = Bundle().apply{
+                putString("uid", receiverUid)
+
+            }
+            findNavController().navigate(
+                R.id.ClientProfile,bundle
+            )
+        }
 
         binding.btnSend.setOnClickListener {
             if(!binding.etMessage.text.isNullOrBlank() || !binding.etMessage.text.trim().isEmpty()) {

@@ -58,14 +58,108 @@ class HomeActivity : AppCompatActivity() {
             val menu = binding.bottomNavigation.getChildAt(0) as? ViewGroup ?: return@post
             val aiShown = prefs.getBoolean("ai_hint_shown", false)
             val profileShown = prefs.getBoolean("freelancer_full_profile_hint_shown", false)
+            val ordershown = prefs.getBoolean("order_hint_shows",false)
+            val chatshown = prefs.getBoolean("chat_hint_shows",false)
+            val homeshown= prefs.getBoolean("home_hint_shows",false)
+
 
 
 
             when {
+                !homeshown -> showHomeHint(prefs, menu)
+                !chatshown -> showChatHint(prefs, menu)
+                !ordershown -> showOrderHint(prefs, menu)
                 !aiShown -> showAiHint(prefs, menu)
                 !profileShown -> showProfileHint(prefs, menu)
             }
         }
+    }
+    private fun showHomeHint(prefs: SharedPreferences, menu: ViewGroup) {
+        val aiTarget = menu.getChildAt(0) ?: return  // index 3 = AI/Gemini
+
+        TapTargetView.showFor(
+            this@HomeActivity,
+            TapTarget.forView(
+                aiTarget,
+                "Start Exploring",
+                "Find Projects and discover opportunities"
+            )
+                .outerCircleColor(R.color.black)
+                .outerCircleAlpha(0.85f)
+                .targetCircleColor(android.R.color.white)
+                .titleTextColor(android.R.color.white)
+                .descriptionTextColor(android.R.color.white)
+                .tintTarget(true)
+                .drawShadow(true)
+                .cancelable(false)
+                .id(201),
+            object : TapTargetView.Listener() {
+                override fun onTargetClick(view: TapTargetView) {
+                    super.onTargetClick(view)
+                    prefs.edit().putBoolean("home_hint_shows", true).apply()
+                    // Show profile hint right after AI hint is dismissed
+                    showChatHint(prefs,menu)
+                }
+            }
+        )
+    }
+    private fun showChatHint(prefs: SharedPreferences, menu: ViewGroup) {
+        val aiTarget = menu.getChildAt(1) ?: return  // index 3 = AI/Gemini
+
+        TapTargetView.showFor(
+            this@HomeActivity,
+            TapTarget.forView(
+                aiTarget,
+                "Connect with People",
+                "All your conversations appear here. Reply quickly, discuss project details, and build trust with clients."
+            )
+                .outerCircleColor(R.color.black)
+                .outerCircleAlpha(0.85f)
+                .targetCircleColor(android.R.color.white)
+                .titleTextColor(android.R.color.white)
+                .descriptionTextColor(android.R.color.white)
+                .tintTarget(true)
+                .drawShadow(true)
+                .cancelable(false)
+                .id(201),
+            object : TapTargetView.Listener() {
+                override fun onTargetClick(view: TapTargetView) {
+                    super.onTargetClick(view)
+                    prefs.edit().putBoolean("chat_hint_shows", true).apply()
+                    // Show profile hint right after AI hint is dismissed
+                    showOrderHint(prefs, menu)
+                }
+            }
+        )
+    }
+    private fun showOrderHint(prefs: SharedPreferences, menu: ViewGroup) {
+        val aiTarget = menu.getChildAt(2) ?: return  // index 3 = AI/Gemini
+
+        TapTargetView.showFor(
+            this@HomeActivity,
+            TapTarget.forView(
+                aiTarget,
+                "Manage Your Projects",
+                "Track all your projects here. Use the tabs to view Open, In Progress, Completed, and Cancelled work."
+            )
+                .outerCircleColor(R.color.black)
+                .outerCircleAlpha(0.85f)
+                .targetCircleColor(android.R.color.white)
+                .titleTextColor(android.R.color.white)
+                .descriptionTextColor(android.R.color.white)
+                .tintTarget(true)
+                .drawShadow(true)
+                .cancelable(false)
+                .id(201),
+            object : TapTargetView.Listener() {
+                override fun onTargetClick(view: TapTargetView) {
+                    super.onTargetClick(view)
+                    prefs.edit().putBoolean("order_hint_shows", true).apply()
+                    // Show profile hint right after AI hint is dismissed
+                    showAiHint(prefs, menu)
+                }
+            }
+        )
     }
 
     private fun showAiHint(prefs: SharedPreferences, menu: ViewGroup) {

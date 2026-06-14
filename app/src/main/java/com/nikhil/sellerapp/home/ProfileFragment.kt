@@ -15,6 +15,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.getkeepsafe.taptargetview.TapTarget
+import com.getkeepsafe.taptargetview.TapTargetView
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
@@ -71,10 +73,13 @@ class ProfileFragment : Fragment() {
     private val binding get() = _binding!!//to prevent memory leaks
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+        requireActivity().getSharedPreferences("hints", Context.MODE_PRIVATE).edit().clear().apply()
+
     }
 
     override fun onCreateView(
@@ -87,6 +92,7 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         loadinfo()
         loadotherinfo()
         supabaseClient = (requireActivity().application as supabasefile).supabaseClient
@@ -122,8 +128,55 @@ class ProfileFragment : Fragment() {
         if (savedInstanceState == null) {
             binding.basichip.isChecked = true
         }
+        showEditProfileHintIfNeeded()
         }
+    private fun showEditProfileHintIfNeeded() {
+        val prefs = requireActivity().getSharedPreferences("hints", Context.MODE_PRIVATE)
+        val shown = prefs.getBoolean("edit_profile_hint_shown", false)
+        if (shown) return
 
+        binding.root.postDelayed({
+            if (_binding == null) return@postDelayed
+
+            TapTargetView.showFor(
+                requireActivity(),
+                TapTarget.forBounds(
+                    android.graphics.Rect(
+                        binding.root.width / 2 - 1,      // center X
+                        binding.root.height,              // bottom of screen
+                        binding.root.width / 2 + 1,      // center X
+                        binding.root.height + 1                            // tiny height = dome emerges from top
+                    ),
+                    "Complete Your Profile",
+                    "Add skills, experience and rate to increase your visibility to clients"
+                )
+                    .outerCircleColor(R.color.black)
+                    .outerCircleAlpha(0.90f)
+                    .targetCircleColor(R.color.black)
+                    .titleTextColor(android.R.color.white)
+                    .descriptionTextColor(android.R.color.white)
+                    .drawShadow(true)
+                    .cancelable(true)
+                    .tintTarget(false)
+                    .id(203),
+                object : TapTargetView.Listener() {
+                    override fun onTargetClick(view: TapTargetView) {
+                        super.onTargetClick(view)
+                        prefs.edit()
+                            .putBoolean("edit_profile_hint_shown", true)
+                            .apply()
+                    }
+                    override fun onOuterCircleClick(view: TapTargetView) {
+                        super.onOuterCircleClick(view)
+                        prefs.edit()
+                            .putBoolean("edit_profile_hint_shown", true)
+                            .apply()
+                        view.dismiss(false)
+                    }
+                }
+            )
+        }, 500L)
+    }
 
 
     companion object {
@@ -257,7 +310,8 @@ class ProfileFragment : Fragment() {
                     if (snapshot != null && snapshot.exists()) {
                         val user = snapshot.toObject<Freelancer>()
                         b.tvtitle.setText(user?.primaryskill)
-                        b.tvrate.setText(user?.projectRate.toString()+"/hour")
+                        val rate = user?.projectRate ?: 0.0
+                        b.tvrate.text = "₹$rate/hour"
                     }
                 }
         }

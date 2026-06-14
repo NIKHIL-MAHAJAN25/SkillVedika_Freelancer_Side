@@ -200,7 +200,7 @@ class EditFragment : Fragment() {
                 if(snapshot!=null && snapshot.exists()){
                     val user=snapshot.toObject<Freelancer>()
                     b.etprim.setText(user?.primaryskill)
-                    b.etproject.setText(user?.projectRate.toString())
+                    b.etproject.setText(user?.projectRate?.toString() ?: "")
                     oprimskill = user?.primaryskill
                    orate=user?.projectRate.toString()
                 }

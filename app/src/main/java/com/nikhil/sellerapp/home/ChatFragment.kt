@@ -109,8 +109,9 @@ class ChatFragment : Fragment() {
                 if (chats.isEmpty()) {
                     binding.chatShimmer.stopShimmer()
                     binding.chatShimmer.visibility = View.GONE
-
-                    binding.chatlist.visibility = View.VISIBLE
+                    binding.chatlist.visibility = View.GONE  // keep hidden
+                    binding.tvEmpty.visibility = View.VISIBLE
+                    binding.tvEmptySub.visibility = View.VISIBLE
                     adapter.submitList(emptyList())
                     return@addSnapshotListener
                 }
@@ -138,6 +139,8 @@ class ChatFragment : Fragment() {
                                         it.chatShimmer.stopShimmer()
                                         it.chatShimmer.visibility = View.GONE
                                         it.chatlist.visibility = View.VISIBLE
+                                        it.tvEmpty.visibility = View.GONE       // ADD
+                                        it.tvEmptySub.visibility = View.GONE    // ADD
                                     }
                                 }
                             }
