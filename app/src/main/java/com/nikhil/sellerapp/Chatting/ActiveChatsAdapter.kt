@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
+import com.nikhil.sellerapp.R
 import com.nikhil.sellerapp.databinding.ChatlistItemBinding
 import com.nikhil.sellerapp.dataclasses.Chat
 
@@ -38,47 +39,35 @@ class ActiveChatsAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(chat: Chat) {
-
             val currentUid = FirebaseAuth.getInstance().currentUser?.uid
-
-            val otherUserId = chat.participants.firstOrNull {
-                it != currentUid
-            }
-
+            val otherUserId = chat.participants.firstOrNull { it != currentUid }
             val userData = userInfoMap[otherUserId]
 
-            // Prevent flicker
-            if (userData == null || otherUserId == null) {
-
-                binding.root.visibility = View.INVISIBLE
-                return
-            }
-
+            // Always show the row, use fallback if data missing
             binding.root.visibility = View.VISIBLE
 
-            binding.tvName.text = userData.first
+            val name = userData?.first ?: "Deleted Account"
+            val image = userData?.second ?: ""
 
+            binding.tvName.text = name
             binding.tvLastMessage.text = chat.lastMessage
+            binding.tvTime.text = DateFormat.format("hh:mm a", chat.lastMessageTime?.toDate())
 
-            binding.tvTime.text =
-                DateFormat.format(
-                    "hh:mm a",
-                    chat.lastMessageTime?.toDate()
-                )
-
-            Glide.with(binding.root.context)
-                .load(userData.second)
-                .centerCrop()
-                .into(binding.ivProfileImage)
+            if (image.isNotEmpty()) {
+                Glide.with(binding.root.context)
+                    .load(image)
+                    .centerCrop()
+                    .into(binding.ivProfileImage)
+            } else {
+                // Show a generic avatar for deleted accounts
+                binding.ivProfileImage.setImageResource(R.drawable.outline_person_off_24)
+            }
 
             binding.root.setOnClickListener {
-
-                onChatClicked(
-                    chat,
-                    otherUserId,
-                    userData.first,
-                    userData.second
-                )
+                if (otherUserId != null && name != "Deleted Account") {
+                    onChatClicked(chat, otherUserId, name, image)
+                }
+                // do nothing if account is deleted — tapping a deleted account chat goes nowhere
             }
         }
     }

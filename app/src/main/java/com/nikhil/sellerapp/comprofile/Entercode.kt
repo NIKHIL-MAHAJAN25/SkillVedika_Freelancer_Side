@@ -33,6 +33,8 @@ class Entercode : AppCompatActivity() {
     private val auid = auth.currentUser?.uid
 
     private val db = Firebase.firestore
+    private var countDownTimer: android.os.CountDownTimer? = null
+    private var isTimerRunning = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,9 +86,7 @@ class Entercode : AppCompatActivity() {
 
                     if (s?.length == 1 && i < boxes.size - 1) {
                         boxes[i + 1].requestFocus()
-                    }
-
-                    else if (s.isNullOrEmpty() && i > 0) {
+                    } else if (s.isNullOrEmpty() && i > 0) {
                         boxes[i - 1].requestFocus()
                     }
                 }
@@ -96,30 +96,18 @@ class Entercode : AppCompatActivity() {
         }
 
         binding.btnResendCode.setOnClickListener {
+            if (isTimerRunning) return@setOnClickListener
 
             if (auid != null) {
-
                 generate { code ->
-
-                    val user = mapOf(
-                        "approvalCode" to code
-                    )
-
+                    val user = mapOf("approvalCode" to code)
                     db.collection("Users")
                         .document(auid)
                         .update(user)
                         .addOnSuccessListener {
-
                             fetchmail(auid) { mail ->
-
-                                if (mail != null) {
-                                    sendOtp(
-                                        mail,
-                                        code.toString()
-                                    )
-                                }
+                                if (mail != null) sendOtp(mail, code.toString())
                             }
-
                             Toast.makeText(
                                 this,
                                 "Security code sent on your mail",
@@ -127,17 +115,13 @@ class Entercode : AppCompatActivity() {
                             ).show()
                         }
                         .addOnFailureListener { e ->
-
-                            Toast.makeText(
-                                this,
-                                "Failed: ${e.message}",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Toast.makeText(this, "Failed: ${e.message}", Toast.LENGTH_SHORT).show()
                         }
                 }
             }
-        }
 
+            startResendCooldown()
+        }
         binding.btnVerifyOtp.setOnClickListener {
 
             val code = boxes.joinToString("") {
@@ -197,6 +181,23 @@ class Entercode : AppCompatActivity() {
                 }
             }
         }
+    }
+    private fun startResendCooldown() {
+        isTimerRunning = true
+        binding.btnResendCode.isEnabled = false
+
+        countDownTimer = object : android.os.CountDownTimer(30_000L, 1_000L) {
+            override fun onTick(millisUntilFinished: Long) {
+                val seconds = millisUntilFinished / 1000
+                binding.btnResendCode.text = "Resend in ${seconds}s"
+            }
+
+            override fun onFinish() {
+                isTimerRunning = false
+                binding.btnResendCode.isEnabled = true
+                binding.btnResendCode.text = "Resend Code"
+            }
+        }.start()
     }
 
     fun fetchcode(
@@ -356,4 +357,11 @@ class Entercode : AppCompatActivity() {
                 }
             )
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        countDownTimer?.cancel()
+
+    }
 }
+

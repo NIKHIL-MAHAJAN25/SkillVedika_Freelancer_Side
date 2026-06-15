@@ -127,11 +127,18 @@ class ChatFragment : Fragment() {
                             .document(otherUserId)
                             .get()
                             .addOnSuccessListener { userDoc ->
-                                val name = userDoc.getString("fullName") ?: ""
-                                val image = userDoc.getString("profilePictureUrl") ?: ""
+                                val name = if (userDoc.exists()) {
+                                    userDoc.getString("fullName") ?: "Unknown"
+                                } else {
+                                    "Deleted Account"
+                                }
+                                val image = if (userDoc.exists()) {
+                                    userDoc.getString("profilePictureUrl") ?: ""
+                                } else {
+                                    "" // will show placeholder in Glide
+                                }
                                 userMap[otherUserId] = Pair(name, image)
                                 pending--
-                                // Only submit once ALL user fetches are done
                                 if (pending == 0) {
                                     adapter.setUserInfo(userMap)
                                     adapter.submitList(ArrayList(chats))
@@ -139,12 +146,14 @@ class ChatFragment : Fragment() {
                                         it.chatShimmer.stopShimmer()
                                         it.chatShimmer.visibility = View.GONE
                                         it.chatlist.visibility = View.VISIBLE
-                                        it.tvEmpty.visibility = View.GONE       // ADD
-                                        it.tvEmptySub.visibility = View.GONE    // ADD
+                                        it.tvEmpty.visibility = View.GONE
+                                        it.tvEmptySub.visibility = View.GONE
                                     }
                                 }
                             }
                             .addOnFailureListener {
+                                // treat fetch failure same as deleted
+                                userMap[otherUserId] = Pair("Deleted Account", "")
                                 pending--
                                 if (pending == 0) {
                                     adapter.setUserInfo(userMap)

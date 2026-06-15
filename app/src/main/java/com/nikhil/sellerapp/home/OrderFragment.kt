@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.Firebase
@@ -13,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.firestore
+import com.nikhil.sellerapp.R
 import com.nikhil.sellerapp.databinding.FragmentOrderBinding
 import com.nikhil.sellerapp.dataclasses.Project
 import com.nikhil.sellerapp.dataclasses.ProjectStatus
@@ -85,6 +87,14 @@ class OrderFragment : Fragment() {
             onCancelProject = { project ->
 
                 cancelProject(project)
+            },
+            onLeaveReview = { project ->
+                val bundle = Bundle().apply {
+                    putString("uid", project.clientuid ?: "")
+                    putString("freeName", project.freename ?: "Freelancer")
+                    putString("projectId", project.projectid)
+                }
+                findNavController().navigate(R.id.addrev, bundle)
             }
         )
 
