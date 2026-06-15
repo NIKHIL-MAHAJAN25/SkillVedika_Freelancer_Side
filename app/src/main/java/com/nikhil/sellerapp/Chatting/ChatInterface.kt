@@ -118,6 +118,9 @@ class ChatInterface : Fragment() {
                 R.id.ClientProfile,bundle
             )
         }
+        binding.btnBack.setOnClickListener{
+            findNavController().navigateUp()
+        }
         binding.ivProfileImage.setOnClickListener {
             val bundle = Bundle().apply{
                 putString("uid", receiverUid)
