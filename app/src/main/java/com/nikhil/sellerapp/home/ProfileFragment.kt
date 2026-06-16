@@ -1,5 +1,6 @@
 package com.nikhil.sellerapp.home
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -149,8 +150,24 @@ class ProfileFragment : Fragment() {
             dialog.dismiss()
             showDeleteConfirmationDialog()
         }
+        dialogView.findViewById<android.widget.LinearLayout>(R.id.rowContactSupport).setOnClickListener {
+            dialog.dismiss()
+            showcontactDialog()
+        }
 
         dialog.show()
+    }
+    private fun showcontactDialog()
+    {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:support.skillvedika@gmail.com")
+            putExtra(Intent.EXTRA_SUBJECT, "Skill Vedika Support")
+        }
+        try {
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(requireContext(), "No email app found. Contact us at support.skillvedika@gmail.com", Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun logout() {
