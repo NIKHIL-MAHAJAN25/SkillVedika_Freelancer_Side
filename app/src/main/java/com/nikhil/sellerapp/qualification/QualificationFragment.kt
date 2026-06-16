@@ -101,6 +101,66 @@ private fun saveinfo(){
     val agg=binding.etaggregate.text.toString()
     val max=binding.etmax.text.toString()
     val edate=binding.etend.text.toString()
+    binding.tvcollege.error = null
+    binding.tvenroll.error = null
+    binding.tvskill.error = null
+    binding.tvagreggate.error = null
+    binding.tvmax.error = null
+    binding.tvend.error = null
+
+    when {
+        inst.isEmpty() -> {
+            binding.tvcollege.error = "Institution name is required"
+            binding.etcollege.requestFocus()
+            return
+        }
+        inst.length < 3 -> {
+            binding.tvcollege.error = "Enter a valid institution name"
+            binding.etcollege.requestFocus()
+            return
+        }
+        roll.isEmpty() -> {
+            binding.tvenroll.error = "Enrollment number is required"
+            binding.etenroll.requestFocus()
+            return
+        }
+        edate.isEmpty() && !binding.checkcurrent.isChecked -> {
+            binding.tvend.error = "Select graduation year or mark as ongoing"
+            binding.etend.requestFocus()
+            return
+        }
+        degree.isEmpty() -> {
+            binding.tvskill.error = "Degree is required"
+            binding.etskill.requestFocus()
+            return
+        }
+        agg.isEmpty() -> {
+            binding.tvagreggate.error = "Aggregate is required"
+            binding.etaggregate.requestFocus()
+            return
+        }
+        agg.toFloatOrNull() == null -> {
+            binding.tvagreggate.error = "Enter a valid number"
+            binding.etaggregate.requestFocus()
+            return
+        }
+        max.isEmpty() -> {
+            binding.tvmax.error = "Max marks is required"
+            binding.etmax.requestFocus()
+            return
+        }
+        max.toFloatOrNull() == null -> {
+            binding.tvmax.error = "Enter a valid number"
+            binding.etmax.requestFocus()
+            return
+        }
+        agg.toFloat() > max.toFloat() -> {
+            binding.tvagreggate.error = "Can't exceed max marks"
+            binding.etaggregate.requestFocus()
+            return
+        }
+    }
+
     val details= mapOf(
         "instName" to inst,
                 "rollNo" to roll,

@@ -89,20 +89,38 @@ class AddExperience : Fragment() {
         binding.btnSave.setOnClickListener {
             savedata()
         }
-        binding.checkcurrent.setOnCheckedChangeListener { buttonView, isChecked ->
-            run {
-                if (isChecked)
-                {
-                    binding.etend.isEnabled = false
-                    binding.etend.text = null
-                }
-                else
-                {
-                    binding.tvend.isEnabled = true
-                }
+        binding.checkcurrent.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                binding.etend.isEnabled = false
+                binding.etend.text = null
+                binding.tvend.error = null  // clear error when toggled
+            } else {
+                binding.etend.isEnabled = true
             }
-//            binding.tvend.isEnabled = !binding.checkcurrent.isChecked
         }
+
+        // Auto-clear errors on input
+        listOf(
+            binding.tvcompname to binding.etcompname,
+            binding.tvdesig to binding.etdesig,
+            binding.tvdesc2 to binding.etdesc
+        ).forEach { (layout, editText) ->
+            editText.addTextChangedListener(object : android.text.TextWatcher {
+                override fun afterTextChanged(s: android.text.Editable?) { layout.error = null }
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            })
+        }
+        binding.etstart.addTextChangedListener(object : android.text.TextWatcher {
+            override fun afterTextChanged(s: android.text.Editable?) { binding.tvstart.error = null }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+        binding.etend.addTextChangedListener(object : android.text.TextWatcher {
+            override fun afterTextChanged(s: android.text.Editable?) { binding.tvend.error = null }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
 
     }
 
@@ -254,20 +272,51 @@ class AddExperience : Fragment() {
         val desig=binding.etdesig.text.toString()
         val desc=binding.etdesc.text.toString()
         val sdate=binding.etstart.text.toString()
-        val edate=
-            if (binding.checkcurrent.isChecked){
-            "Present"
-        }else{
-            binding.etend.text.toString()
-        }
+        val isCurrentlyWorking = binding.checkcurrent.isChecked
         val logosave=companylogo
+        val edate = binding.etend.text.toString().trim()
+        // Clear previous errors
+        binding.tvcompname.error = null
+        binding.tvdesig.error = null
+        binding.tvstart.error = null
+        binding.tvend.error = null
+        binding.tvdesc2.error = null
+
+        when {
+            cname.isEmpty() -> {
+                binding.tvcompname.error = "Company name is required"
+                binding.etcompname.requestFocus()
+                return
+            }
+            desig.isEmpty() -> {
+                binding.tvdesig.error = "Title/designation is required"
+                binding.etdesig.requestFocus()
+                return
+            }
+            sdate.isEmpty() -> {
+                binding.tvstart.error = "Joining date is required"
+                binding.etstart.requestFocus()
+                return
+            }
+            !isCurrentlyWorking && edate.isEmpty() -> {
+                binding.tvend.error = "Select an end date or mark as currently working"
+                binding.etend.requestFocus()
+                return
+            }
+            desc.isEmpty() -> {
+                binding.tvdesc2.error = "Please describe your role"
+                binding.etdesc.requestFocus()
+                return
+            }
+        }
+        val finalEndDate = if (isCurrentlyWorking) "Present" else edate
 
         val details= mapOf(
             "companyname" to cname,
             "designation" to desig,
             "description" to desc,
             "startDate" to sdate,
-            "endDate" to edate,
+            "endDate" to finalEndDate,
             "cologo" to logosave
         )
         if (uid != null) {

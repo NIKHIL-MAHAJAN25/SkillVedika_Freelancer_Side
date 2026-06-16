@@ -69,8 +69,27 @@ class certificateFragment : Fragment() {
         binding.etend.setOnClickListener {
             showdate(binding.etend,"Select ending Date")
         }
-
+        // Auto-clear errors on input
+        listOf(
+            binding.tvcompname to binding.etcompname,
+            binding.tvdesig to binding.etdesig,
+            binding.tvskill to binding.etskill
+        ).forEach { (layout, editText) ->
+            editText.addTextChangedListener(object : android.text.TextWatcher {
+                override fun afterTextChanged(s: android.text.Editable?) { layout.error = null }
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            })
+        }
+        // Date field clears on pick — handled inside showdate already via setText
+        binding.etend.addTextChangedListener(object : android.text.TextWatcher {
+            override fun afterTextChanged(s: android.text.Editable?) { binding.tvend.error = null }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
     }
+
+
     private fun saveinfo(){
         if(uid!=null){
             var inst=binding.etcompname.text.toString()
@@ -78,6 +97,38 @@ class certificateFragment : Fragment() {
             var date=binding.etend.text.toString()
             var skill=binding.etskill.text.toString()
             var desc=binding.etdesc.text.toString()
+            binding.tvcompname.error = null
+            binding.tvdesig.error = null
+            binding.tvend.error = null
+            binding.tvskill.error = null
+
+            when {
+                inst.isEmpty() -> {
+                    binding.tvcompname.error = "Institution name is required"
+                    binding.etcompname.requestFocus()
+                    return
+                }
+                inst.length < 3 -> {
+                    binding.tvcompname.error = "Enter a valid institution name"
+                    binding.etcompname.requestFocus()
+                    return
+                }
+                roll.isEmpty() -> {
+                    binding.tvdesig.error = "Certificate number is required"
+                    binding.etdesig.requestFocus()
+                    return
+                }
+                date.isEmpty() -> {
+                    binding.tvend.error = "Issue date is required"
+                    binding.etend.requestFocus()
+                    return
+                }
+                skill.isEmpty() -> {
+                    binding.tvskill.error = "Key skill is required"
+                    binding.etskill.requestFocus()
+                    return
+                }
+            }
             var details= mapOf(
                 "skillname" to skill,
                 "certNo" to roll,
