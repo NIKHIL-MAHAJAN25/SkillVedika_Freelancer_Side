@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import com.nikhil.sellerapp.databinding.SkillCateoryItemBinding
 
-class skillsadapter(val list:MutableList<SkillsCat>):RecyclerView.Adapter<skillsadapter.ViewHolder>() {
+class skillsadapter(val list:MutableList<SkillsCat>,val onDeleteCategory: (SkillsCat) -> Unit, val onDeleteSkill: (categoryName: String, skillName: String) -> Unit):RecyclerView.Adapter<skillsadapter.ViewHolder>() {
     inner class ViewHolder(val binding: SkillCateoryItemBinding):RecyclerView.ViewHolder(binding.root)
     {
         fun bindata(position: Int){
@@ -14,10 +14,19 @@ class skillsadapter(val list:MutableList<SkillsCat>):RecyclerView.Adapter<skills
 
              binding.tvct.text=list[position].categoryName
             binding.skillChipGroup.removeAllViews()
-            for (sname in list[position].skills){
-                val chip= Chip(itemView.context)
-                chip.text=sname
+            for (sname in item.skills) {
+                val chip = Chip(itemView.context)
+                chip.text = sname
+                chip.setOnLongClickListener {
+                    onDeleteSkill(item.categoryName, sname)
+                    true
+                }
                 binding.skillChipGroup.addView(chip)
+            }
+            // Long press on the whole item card to delete
+            binding.root.setOnLongClickListener {
+                onDeleteCategory(item)
+                true
             }
         }
     }

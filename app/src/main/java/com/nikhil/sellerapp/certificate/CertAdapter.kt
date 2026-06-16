@@ -8,7 +8,7 @@ import com.nikhil.sellerapp.databinding.ExperienceitemBinding
 import com.nikhil.sellerapp.dataclasses.Certification
 import kotlinx.coroutines.flow.combineTransform
 
-class CertAdapter(val list:MutableList<Certification>):RecyclerView.Adapter<CertAdapter.ViewHolder>() {
+class CertAdapter(val list:MutableList<Certification>, val onDeleteClick:(Certification)->Unit):RecyclerView.Adapter<CertAdapter.ViewHolder>() {
     inner class ViewHolder(val binding: CertificationItemBinding):RecyclerView.ViewHolder(binding.root){
         fun bindata(position: Int){
             val item=list[position]
@@ -16,6 +16,9 @@ class CertAdapter(val list:MutableList<Certification>):RecyclerView.Adapter<Cert
             binding.tvIssueDate.setText(list[position].issuedate)
             binding.tvSkillName.setText(list[position].skillname)
             binding.tvIssuingCompany.setText(list[position].issuingcompany)
+            binding.btnMenu.setOnClickListener {
+                onDeleteClick(item)
+            }
         }
     }
 

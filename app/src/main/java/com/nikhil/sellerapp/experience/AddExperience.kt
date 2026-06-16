@@ -77,6 +77,7 @@ class AddExperience : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupauto()
+
         binding.imgbt.setOnClickListener {
             findNavController().navigateUp()
         }

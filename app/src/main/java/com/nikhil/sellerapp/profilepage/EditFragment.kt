@@ -38,7 +38,7 @@ class EditFragment : Fragment() {
         "Database and Data Management",
         "Cloud and DevOps",
         "Product Design (UI/UX)",
-        "Project Management & Methodologies",
+        "Project Management and Methodologies",
         "Data Science and Machine Learning",
 
 

@@ -19,10 +19,9 @@ data class Project (
     val budget:Double=0.0,
     val requiredSkills: List<String> = emptyList(),
     val status: String = ProjectStatus.OPEN.name,
-//    @ServerTimestamp
+//     @ServerTimestamp
 //    val postedAt: Timestamp? = null,  // When Client clicked "Post"
-//    val startedAt: Timestamp? = null, // When Freelancer clicked "Accept"
-//    val completedAt: Timestamp? = null // When Client clicked "Approve"
+
 )
 enum class ProjectStatus {
     OPEN,

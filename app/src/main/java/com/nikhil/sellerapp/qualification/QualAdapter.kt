@@ -8,7 +8,7 @@ import com.nikhil.sellerapp.dataclasses.Experience
 import com.nikhil.sellerapp.dataclasses.Qualification
 
 
-class QualAdapter(val qlist:MutableList<Qualification>):RecyclerView.Adapter<QualAdapter.ViewHolder>() {
+class QualAdapter(val qlist:MutableList<Qualification>,private val onDeleteClick:(Qualification)->Unit):RecyclerView.Adapter<QualAdapter.ViewHolder>() {
     inner class ViewHolder(val binding: QualificationItemBinding):RecyclerView.ViewHolder(binding.root)
     {
         fun bindData(position: Int){
@@ -18,6 +18,9 @@ class QualAdapter(val qlist:MutableList<Qualification>):RecyclerView.Adapter<Qua
             binding.tvAggregate.setText("${qlist[position].aggregate}/${qlist[position].max}")
             binding.tvEndYear.setText(qlist[position].endYear)
             binding.tvDegree.setText(qlist[position].degree)
+            binding.btnMenu.setOnClickListener {
+                onDeleteClick(item)
+            }
 
         }
     }

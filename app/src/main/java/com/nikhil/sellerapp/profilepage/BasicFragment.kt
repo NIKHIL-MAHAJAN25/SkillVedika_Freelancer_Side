@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import com.nikhil.sellerapp.ClientProfileView.ReviewAdapter
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.Firebase
@@ -64,7 +65,10 @@ class BasicFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapterr= CertAdapter(userlist)
+        adapterr= CertAdapter(userlist){certification ->
+            deletecert(certification)
+
+        }
         binding.recylercert.layoutManager=LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL,false)
         binding.recylercert.adapter=adapterr
         userlist.clear()
@@ -74,7 +78,9 @@ class BasicFragment : Fragment() {
 
 
 
-        qadapter= QualAdapter(qlist)
+        qadapter= QualAdapter(qlist){ qualification ->
+            deletequal(qualification)
+        }
         binding.recylerqual.layoutManager=LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.recylerqual.adapter=qadapter
 
@@ -88,6 +94,42 @@ class BasicFragment : Fragment() {
         binding.btnQualEdit.setOnClickListener {
             findNavController().navigate(R.id.prof_to_qual)
         }
+    }
+    private fun deletecert(cert: Certification) {
+
+        if (uid == null) return
+
+        db.collection("Freelancers")
+            .document(uid)
+            .update(
+                "certification",
+                com.google.firebase.firestore.FieldValue.arrayRemove(cert)
+            )
+            .addOnSuccessListener {
+                Log.d("DELETE", "Experience removed")
+                Toast.makeText(requireContext(), "Certificate Removed", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Log.e("DELETE", "Failed", it)
+            }
+    }
+    private fun deletequal(qual: Qualification) {
+
+        if (uid == null) return
+
+        db.collection("Freelancers")
+            .document(uid)
+            .update(
+                "qualification",
+                com.google.firebase.firestore.FieldValue.arrayRemove(qual)
+            )
+            .addOnSuccessListener {
+                Log.d("DELETE", "Experience removed")
+                Toast.makeText(requireContext(), "Qualification Removed", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Log.e("DELETE", "Failed", it)
+            }
     }
     private fun setupReviewRecycler() {
 

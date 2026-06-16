@@ -126,7 +126,7 @@ class ProjectDisplay : Fragment() {
     {
         Log.e("fire","${skill}")
         Log.e("Firestore", "Category length: ${skill.length}")
-        db.collection("Projects").whereEqualTo("category", skill).get().addOnSuccessListener { snapshot->
+        db.collection("Projects").whereEqualTo("category", skill).whereEqualTo("status","OPEN").get().addOnSuccessListener { snapshot->
 
             if (snapshot.isEmpty) {
                 Log.e("Firestore", "No projects found for category:$skill")

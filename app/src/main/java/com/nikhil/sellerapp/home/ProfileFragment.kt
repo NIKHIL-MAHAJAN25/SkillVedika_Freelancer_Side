@@ -70,7 +70,7 @@ class ProfileFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        requireActivity().getSharedPreferences("hints", Context.MODE_PRIVATE).edit().clear().apply()
+
     }
 
     override fun onCreateView(
@@ -318,6 +318,10 @@ class ProfileFragment : Fragment() {
         val prefs = requireActivity().getSharedPreferences("hints", Context.MODE_PRIVATE)
         val shown = prefs.getBoolean("edit_profile_hint_shown", false)
         if (shown) return
+        // Mark as shown IMMEDIATELY
+        prefs.edit()
+            .putBoolean("edit_profile_hint_shown", true)
+            .apply()
 
         binding.root.postDelayed({
             if (_binding == null) return@postDelayed

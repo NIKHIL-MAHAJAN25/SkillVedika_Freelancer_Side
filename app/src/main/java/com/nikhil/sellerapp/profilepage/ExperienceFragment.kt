@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.Firebase
@@ -60,7 +61,10 @@ class ExperienceFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapterr= ExpAdapter(userlist)
+        adapterr= ExpAdapter(userlist){experience ->
+            deleteexp(experience)
+
+        }
         binding.recycler.layoutManager=LinearLayoutManager(requireContext())
         binding.recycler.adapter=adapterr
         userlist.clear()
@@ -71,6 +75,24 @@ class ExperienceFragment : Fragment() {
             findNavController().navigate(R.id.action_prof_to_exp)//you can define actions to go from district()experience to a main city defined in nav_graph
         }
 
+    }
+    private fun deleteexp(exp: Experience) {
+
+        if (uid == null) return
+
+        db.collection("Freelancers")
+            .document(uid)
+            .update(
+                "experience",
+                com.google.firebase.firestore.FieldValue.arrayRemove(exp)
+            )
+            .addOnSuccessListener {
+                Log.d("DELETE", "Experience removed")
+                Toast.makeText(requireContext(), "Profile updated", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Log.e("DELETE", "Failed", it)
+            }
     }
 
     companion object {

@@ -91,11 +91,58 @@ class SkillsFragment : Fragment() {
             }
     }
     private fun setuprecycler(){
-        skadapter= skillsadapter(sclist)
+        skadapter = skillsadapter(sclist,
+            onDeleteCategory = { showDeleteConfirmation(it) },
+            onDeleteSkill = { category, skill -> deleteSkill(category, skill) }
+        )
         binding.recyclerskills.apply {
             layoutManager=LinearLayoutManager(requireContext())
             adapter=skadapter
         }
+    }
+    private fun deleteSkill(categoryName: String, skillName: String) {
+        if (uid == null) return
+        val skillToRemove = Skill(name = skillName, category = categoryName)
+        db.collection("Freelancers").document(uid)
+            .update("skills", FieldValue.arrayRemove(skillToRemove))
+            .addOnSuccessListener {
+                showSnackbar("'$skillName' removed")
+                loadskills()
+            }
+            .addOnFailureListener {
+                showSnackbar("Failed to remove skill")
+            }
+    }
+    private fun showDeleteConfirmation(category: SkillsCat) {
+        MaterialAlertDialogBuilder(requireContext(), R.style.MySimpleDialogStyle)
+            .setTitle("Remove Skills")
+            .setMessage("Remove all \"${category.categoryName}\" skills from your profile?")
+            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+            .setPositiveButton("Remove") { _, _ ->
+                deleteSkillCategory(category)
+            }
+            .show()
+    }
+
+    private fun deleteSkillCategory(category: SkillsCat) {
+        if (uid == null) return
+        // Rebuild the Skill objects for this category to remove them
+        val skillsToRemove = category.skills.map { skillName ->
+            Skill(name = skillName, category = category.categoryName)
+        }
+        val batch = db.batch()
+        val docRef = db.collection("Freelancers").document(uid)
+        skillsToRemove.forEach { skill ->
+            batch.update(docRef, "skills", FieldValue.arrayRemove(skill))
+        }
+        batch.commit()
+            .addOnSuccessListener {
+                showSnackbar("${category.categoryName} skills removed")
+                loadskills()
+            }
+            .addOnFailureListener {
+                showSnackbar("Failed to remove skills")
+            }
     }
     // in function we convert freelancer to object to fetch info
     private fun loadskills(){
@@ -115,6 +162,14 @@ class SkillsFragment : Fragment() {
                         )
                     }
                     skadapter.updatedata(catlist)
+                    // Toggle empty state
+                    if (catlist.isEmpty()) {
+                        binding.emptyState.visibility = View.VISIBLE
+                        binding.recyclerskills.visibility = View.GONE
+                    } else {
+                        binding.emptyState.visibility = View.GONE
+                        binding.recyclerskills.visibility = View.VISIBLE
+                    }
 
                 }
             }

@@ -9,7 +9,7 @@ import com.nikhil.sellerapp.databinding.ExperienceitemBinding
 import com.nikhil.sellerapp.dataclasses.Experience
 import com.nikhil.sellerapp.dataclasses.Freelancer
 
-class ExpAdapter( val list:MutableList<Experience>):RecyclerView.Adapter<ExpAdapter.ViewHolder>() {
+class ExpAdapter( val list:MutableList<Experience>, private val onDeleteClick:(Experience)->Unit):RecyclerView.Adapter<ExpAdapter.ViewHolder>() {
     inner class ViewHolder(val binding:ExperienceitemBinding):RecyclerView.ViewHolder(binding.root)
     {
         fun binddata(position: Int){
@@ -24,6 +24,9 @@ class ExpAdapter( val list:MutableList<Experience>):RecyclerView.Adapter<ExpAdap
                 .circleCrop()
                 .placeholder(R.drawable.baseline_error_24)
                 .into(binding.imgCompanyLogo)
+            binding.btnDelete.setOnClickListener {
+                onDeleteClick(item)
+            }
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExpAdapter.ViewHolder {

@@ -58,11 +58,25 @@ class QualificationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.checkcurrent.setOnCheckedChangeListener { _, isChecked ->
+
+            if (isChecked) {
+                binding.etend.setText("")
+                binding.etend.isEnabled = false
+                binding.tvend.isEnabled = false
+            } else {
+                binding.etend.isEnabled = true
+                binding.tvend.isEnabled = true
+            }
+        }
         binding.btnSave.setOnClickListener {
             saveinfo()
         }
         binding.etend.setOnClickListener {
-            showdate(binding.etend,"Select ending Date")
+
+            if (!binding.checkcurrent.isChecked) {
+                showdate(binding.etend, "Select ending Date")
+            }
         }
     }
 
@@ -100,7 +114,11 @@ private fun saveinfo(){
     val degree=binding.etskill.text.toString()
     val agg=binding.etaggregate.text.toString()
     val max=binding.etmax.text.toString()
-    val edate=binding.etend.text.toString()
+    val edate = if (binding.checkcurrent.isChecked) {
+        "Present"
+    } else {
+        binding.etend.text.toString()
+    }
     binding.tvcollege.error = null
     binding.tvenroll.error = null
     binding.tvskill.error = null
@@ -124,8 +142,8 @@ private fun saveinfo(){
             binding.etenroll.requestFocus()
             return
         }
-        edate.isEmpty() && !binding.checkcurrent.isChecked -> {
-            binding.tvend.error = "Select graduation year or mark as ongoing"
+        !binding.checkcurrent.isChecked && edate.isBlank() -> {
+            binding.tvend.error = "Select graduation year"
             binding.etend.requestFocus()
             return
         }

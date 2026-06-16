@@ -66,6 +66,10 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.skillsShimmer.visibility = View.VISIBLE
+        binding.skillsShimmer.startShimmer()
+
+        binding.recyclerservices.visibility = View.GONE
 
         setup()
         setupRecyclerView()
@@ -232,25 +236,27 @@ class SearchFragment : Fragment() {
     }
 
     private fun loadJobPostings() {
-        firestoreListener?.remove()
 
-        val query = db.collection("Projects")
+        db.collection("Projects")
             .whereEqualTo("status", ProjectStatus.OPEN.name)
+            .limit(5)
+            .get()
+            .addOnSuccessListener { snapshot ->
 
-        firestoreListener = query.addSnapshotListener { snapshot, error ->
-            if (error != null) {
-                Log.e("JobFeed", "Listen failed", error)
-                return@addSnapshotListener
-            }
-            if (_binding == null) return@addSnapshotListener
+                if (_binding == null) return@addOnSuccessListener
 
-            if (snapshot != null && !snapshot.isEmpty) {
-                jobAdapter.submitList(snapshot.toObjects(Project::class.java))
-            } else {
-                Log.d("JobFeed", "No open jobs found")
-                jobAdapter.submitList(emptyList())
+                if (!snapshot.isEmpty) {
+                    jobAdapter.submitList(
+                        snapshot.toObjects(Project::class.java)
+                    )
+                } else {
+                    Log.d("JobFeed", "No open jobs found")
+                    jobAdapter.submitList(emptyList())
+                }
             }
-        }
+            .addOnFailureListener { e ->
+                Log.e("JobFeed", "Fetch failed", e)
+            }
     }
 
     private fun setup() {
@@ -266,10 +272,23 @@ class SearchFragment : Fragment() {
     private fun loadinfo() {
         db.collection("Skills").addSnapshotListener { snapshot, error ->
             if (error != null) return@addSnapshotListener
-            if (snapshot != null && !snapshot.isEmpty) {
-                serviceAdapter.submitList(snapshot.toObjects(DataSkill::class.java))
-            } else {
+            if(snapshot != null && !snapshot.isEmpty){
+
+                val skill = snapshot.toObjects(DataSkill::class.java)
+                serviceAdapter.submitList(skill)
+
+                binding.skillsShimmer.stopShimmer()
+                binding.skillsShimmer.visibility = View.GONE
+
+                binding.recyclerservices.visibility = View.VISIBLE
+            }else{
                 serviceAdapter.submitList(emptyList())
+
+                binding.skillsShimmer.stopShimmer()
+                binding.skillsShimmer.visibility = View.GONE
+
+                binding.recyclerservices.visibility = View.VISIBLE
+
             }
         }
     }

@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -16,6 +17,9 @@ import com.google.android.material.behavior.HideBottomViewOnScrollBehavior
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.nikhil.sellerapp.R
 import com.nikhil.sellerapp.databinding.ActivityHomeBinding
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
 
 class HomeActivity : AppCompatActivity() {
 
@@ -50,7 +54,12 @@ class HomeActivity : AppCompatActivity() {
         }
 
         val prefs = getSharedPreferences("hints", MODE_PRIVATE)
-        showHintsInSequence(prefs)
+        binding.root.post {
+            lifecycleScope.launch {
+                delay(3000)
+                showHintsInSequence(prefs)
+            }
+        }
     }
 
     private fun showHintsInSequence(prefs: SharedPreferences) {

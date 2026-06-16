@@ -85,11 +85,37 @@
                 app:layout_constraintTop_toBottomOf="@+id/searchBar"
                 app:layout_constraintStart_toEndOf="@id/vguide1"
                 android:layout_marginTop="30dp"
-                android:text="Popular Services"
+                android:text="Popular Project Categories"
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 android:textSize="20sp"
                  />
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/skillsShimmer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/tvpps">
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <include layout="@layout/item_skill_shimmer"/>
+                        <include layout="@layout/item_skill_shimmer"/>
+                        <include layout="@layout/item_skill_shimmer"/>
+                        <include layout="@layout/item_skill_shimmer"/>
+
+                    </LinearLayout>
+
+                </HorizontalScrollView>
+
+            </com.facebook.shimmer.ShimmerFrameLayout>
 
 
 

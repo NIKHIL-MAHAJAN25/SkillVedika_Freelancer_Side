@@ -14,10 +14,9 @@
     app:strokeWidth="0dp"
     >
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:padding="16dp">
 
         <!-- Company Logo -->
@@ -25,61 +24,77 @@
             android:id="@+id/imgCompanyLogo"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:scaleType="centerCrop"
             android:background="@drawable/bg_circle"
-            android:contentDescription="Company Logo" />
+            android:contentDescription="Company Logo"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Texts -->
-        <LinearLayout
+        <!-- Delete Button -->
+        <ImageButton
+            android:id="@+id/btnDelete"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Delete Experience"
+            android:padding="6dp"
+            android:src="@drawable/outline_delete_forever_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Designation -->
+        <TextView
+            android:id="@+id/txtDesignation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_marginEnd="8dp"
+            android:text="Software Engineer"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/imgCompanyLogo"
+            app:layout_constraintEnd_toStartOf="@id/btnDelete"
+            app:layout_constraintTop_toTopOf="@id/imgCompanyLogo" />
 
-            <!-- Designation -->
-            <TextView
-                android:id="@+id/txtDesignation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Software Engineer"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="@android:color/black" />
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+        <!-- Company -->
+        <TextView
+            android:id="@+id/txtCompany"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Google"
+            app:layout_constraintStart_toStartOf="@id/txtDesignation"
+            app:layout_constraintEnd_toEndOf="@id/txtDesignation"
+            app:layout_constraintTop_toBottomOf="@id/txtDesignation" />
 
+        <!-- Dates -->
+        <TextView
+            android:id="@+id/txtdates"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Jan 2022 - Present"
+            app:layout_constraintStart_toStartOf="@id/txtDesignation"
+            app:layout_constraintEnd_toEndOf="@id/txtDesignation"
+            app:layout_constraintTop_toBottomOf="@id/txtCompany" />
 
-                android:orientation="vertical">
+        <!-- Description -->
+        <TextView
+            android:id="@+id/txtDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
 
-                <TextView
-                    android:id="@+id/txtCompany"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Google" />
-                <TextView
-                    android:id="@+id/txtdates"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=" • Jan 2022 - Present"/>
-            </LinearLayout>
+            android:ellipsize="end"
+            android:gravity="start"
+            android:lineSpacingExtra="2dp"
+            android:maxLines="5"
+            android:text="Worked on Android apps for clients, optimized performance, and collaborated with cross-functional teams across multiple regions..."
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/txtDesignation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtdates"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-            <TextView
-                android:id="@+id/txtDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Worked on Android apps for clients, optimized performance, and collaborated with cross-functional teams across multiple regions..."
-                android:textSize="14sp"
-                android:textColor="@android:color/black"
-                android:scrollHorizontally="false"
-                android:singleLine="false"
-                android:lineSpacingExtra="2dp"
-                android:gravity="start"
-                android:justificationMode="none"
-                android:maxLines="5"
-                android:ellipsize="end" />
-        </LinearLayout>
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
