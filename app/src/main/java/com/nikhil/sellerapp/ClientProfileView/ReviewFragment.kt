@@ -71,6 +71,7 @@ class ReviewFragment : Fragment() {
     }
 
     private fun setupCharCounter() {
+        if (_binding == null) return
 
         binding.etReview.addTextChangedListener(
             object : TextWatcher {
@@ -171,6 +172,7 @@ class ReviewFragment : Fragment() {
         review: Review,
         newRating: Double
     ) {
+        if (_binding == null) return
 
         val clientRef =
             db.collection("Client")
@@ -212,6 +214,7 @@ class ReviewFragment : Fragment() {
             )
         }
             .addOnSuccessListener {
+                if (_binding == null) return@addOnSuccessListener
 
                 Toast.makeText(
                     requireContext(),
@@ -223,6 +226,7 @@ class ReviewFragment : Fragment() {
             }
 
             .addOnFailureListener {
+                if (_binding == null) return@addOnFailureListener
 
                 Toast.makeText(
                     requireContext(),

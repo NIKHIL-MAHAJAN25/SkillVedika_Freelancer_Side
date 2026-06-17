@@ -157,6 +157,7 @@ class ChatInterface : Fragment() {
     }
     private fun setupinfo()
     {
+        if (_binding == null) return
         binding.tvName.text=receiverName
         Glide.with(requireContext())
             .load(receiverImage)
@@ -179,6 +180,7 @@ class ChatInterface : Fragment() {
             .collection("messages")
             .orderBy("timestamp")
             .addSnapshotListener { value, error ->
+                if (_binding == null) return@addSnapshotListener
 
                 if (error != null) {
 
@@ -232,16 +234,21 @@ class ChatInterface : Fragment() {
         }
 
             .addOnSuccessListener {
-
+                if (_binding == null) return@addOnSuccessListener
                 binding.etMessage.text?.clear()
 
             }
 
             .addOnFailureListener {
-
+                if (_binding == null) return@addOnFailureListener
                 snack("Failed to send message")
 
             }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding=null
     }
 
     companion object {

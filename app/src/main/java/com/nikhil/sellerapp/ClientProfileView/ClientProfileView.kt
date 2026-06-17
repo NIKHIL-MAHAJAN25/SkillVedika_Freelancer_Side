@@ -71,6 +71,7 @@ class ClientProfileView : Fragment() {
     }
 
     private fun checkAndShowUI() {
+        if (_binding == null) return
         if (userLoaded && clientLoaded) {
             binding.shimmerLayout.stopShimmer()
             binding.shimmerLayout.visibility = View.GONE
@@ -88,7 +89,9 @@ class ClientProfileView : Fragment() {
             .document(uid)
             .get()
             .addOnSuccessListener { snapshot ->
+                if (_binding == null) return@addOnSuccessListener
                 val client = snapshot.toObject<Client>()
+
 
                 binding.tvCompanyName.text = client?.companyName
 
@@ -116,6 +119,8 @@ class ClientProfileView : Fragment() {
                     binding.emptyReviewsState.visibility = View.GONE
                     reviewAdapter.submitList(recentReviews)
                 } else {
+
+
                     binding.tvReviewCount.visibility = View.GONE
                     binding.rvRecentReviews.visibility = View.GONE
                     binding.emptyReviewsState.visibility = View.VISIBLE
@@ -125,6 +130,7 @@ class ClientProfileView : Fragment() {
                 checkAndShowUI()
             }
             .addOnFailureListener {
+                if (_binding == null) return@addOnFailureListener
                 clientLoaded = true
                 checkAndShowUI()
             }
@@ -136,6 +142,7 @@ class ClientProfileView : Fragment() {
             .addOnSuccessListener { snapshot ->
                 val fullName = snapshot.getString("fullName")
                 val imageUrl = snapshot.getString("profilePictureUrl")
+                if (_binding == null) return@addOnSuccessListener
 
                 binding.tvName.text = fullName
 
@@ -148,6 +155,7 @@ class ClientProfileView : Fragment() {
                 checkAndShowUI()
             }
             .addOnFailureListener {
+                if (_binding == null) return@addOnFailureListener
                 userLoaded = true
                 checkAndShowUI()
             }
@@ -164,6 +172,7 @@ class ClientProfileView : Fragment() {
         binding.emptyPaymentState.visibility = View.GONE
 
         methods.forEach { method ->
+            if (!isAdded || _binding == null) return
             val chip = Chip(requireContext(), null, R.style.MyCustomChip).apply {
                 text = method
                 isCloseIconVisible = false

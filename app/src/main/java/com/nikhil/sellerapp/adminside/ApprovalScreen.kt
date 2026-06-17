@@ -41,6 +41,7 @@ class ApprovalScreen : AppCompatActivity() {
     }
     private fun listen(){
         db.collection("Users").whereEqualTo("approved",false).addSnapshotListener{snapshot,e->
+
             if(e!=null){
                 Toast.makeText(this, "Failed: ${e.message}", Toast.LENGTH_SHORT).show()
                 return@addSnapshotListener

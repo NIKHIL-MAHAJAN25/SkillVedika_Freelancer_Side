@@ -66,6 +66,10 @@ class ProjectDisplay : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.shimmerLayout.visibility = View.VISIBLE
+        binding.shimmerLayout.startShimmer()
+
+        binding.recyclerquery.visibility = View.GONE
 
         binding.tvresults.text = skill
         setuprecycler()
@@ -127,6 +131,12 @@ class ProjectDisplay : Fragment() {
         Log.e("fire","${skill}")
         Log.e("Firestore", "Category length: ${skill.length}")
         db.collection("Projects").whereEqualTo("category", skill).whereEqualTo("status","OPEN").get().addOnSuccessListener { snapshot->
+            val b = _binding ?: return@addOnSuccessListener
+
+            b.shimmerLayout.stopShimmer()
+            b.shimmerLayout.visibility = View.GONE
+            b.recyclerquery.visibility = View.VISIBLE
+
 
             if (snapshot.isEmpty) {
                 Log.e("Firestore", "No projects found for category:$skill")
@@ -145,6 +155,13 @@ class ProjectDisplay : Fragment() {
                 Log.e("Firestore", "Query success:${projects}")
             }
         }.addOnFailureListener {
+
+            // HIDE SHIMMER HERE TOO
+            val b = _binding ?: return@addOnFailureListener
+
+            b.shimmerLayout.stopShimmer()
+            b.shimmerLayout.visibility = View.GONE
+            b.recyclerquery.visibility = View.VISIBLE
 
             Log.e("Firestore", "Query failed")
         }

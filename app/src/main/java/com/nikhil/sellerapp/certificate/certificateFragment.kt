@@ -137,9 +137,15 @@ class certificateFragment : Fragment() {
                 "description" to desc
             )
             db.collection("Freelancers").document(uid).update("certification",FieldValue.arrayUnion(details)).addOnSuccessListener {
+                if (_binding == null || !isAdded) return@addOnSuccessListener
                 showsnack("Details Saved")
-                findNavController().navigateUp()
+                activity?.runOnUiThread {
+                    if (isAdded) {
+                        findNavController().navigateUp()
+                    }
+                }
             }.addOnFailureListener {
+                if (_binding == null || !isAdded) return@addOnFailureListener
                 showsnack("Error Check Your Internet")
             }
         }
@@ -192,7 +198,8 @@ class certificateFragment : Fragment() {
             }
     }
 private fun showsnack(message:String){
-    Snackbar.make(binding.root,message,Snackbar.LENGTH_SHORT).show()
+    val b = _binding ?: return
+    Snackbar.make(b.root,message,Snackbar.LENGTH_SHORT).show()
 }
     override fun onDestroyView() {
         super.onDestroyView()

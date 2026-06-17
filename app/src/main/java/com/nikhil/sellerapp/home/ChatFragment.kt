@@ -76,6 +76,7 @@ class ChatFragment : Fragment() {
 
                 putString("receiverImage", receiverImage)
             }
+            if (!isAdded) return@ActiveChatsAdapter
 
             findNavController().navigate(
                 R.id.chatlist,
@@ -94,7 +95,7 @@ class ChatFragment : Fragment() {
     private fun loadChats() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
-        Firebase.firestore.collection("Chat")
+        chatsListener=Firebase.firestore.collection("Chat")
             .whereArrayContains("participants", uid)
 
             .addSnapshotListener { value, error ->
@@ -127,6 +128,7 @@ class ChatFragment : Fragment() {
                             .document(otherUserId)
                             .get()
                             .addOnSuccessListener { userDoc ->
+                                if (_binding == null) return@addOnSuccessListener
                                 val name = if (userDoc.exists()) {
                                     userDoc.getString("fullName") ?: "Unknown"
                                 } else {
@@ -152,6 +154,7 @@ class ChatFragment : Fragment() {
                                 }
                             }
                             .addOnFailureListener {
+                                if (_binding == null) return@addOnFailureListener
                                 // treat fetch failure same as deleted
                                 userMap[otherUserId] = Pair("Deleted Account", "")
                                 pending--

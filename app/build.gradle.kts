@@ -21,7 +21,7 @@ android {
         buildConfigField("String", "SUPABASE_KEY", "\"${localProperties.getProperty("SUPABASE_KEY")}\"")
         buildConfigField("String", "BRANDFETCH_API_KEY", "\"${localProperties.getProperty("BRANDFETCH_API_KEY")}\"")
         buildConfigField("String", "GOOGLE_KEY", "\"${localProperties.getProperty("GOOGLE_KEY")}\"")
-        manifestPlaceholders["GOOGLE_PLACES_API_KEY"] = localProperties.getProperty("GOOGLE_PLACES_API_KEY") ?: ""
+
         applicationId = "com.nikhil.sellerapp"
         minSdk = 24
         targetSdk = 35
@@ -33,7 +33,9 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -117,10 +119,10 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
 
 
-    implementation("com.hbb20:ccp:2.6.1")
-    implementation("androidx.viewpager2:viewpager2:1.0.0")
-    implementation("com.caverock:androidsvg:1.4")
-    implementation("com.google.android.material:material:1.11.0")
+
+
+
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

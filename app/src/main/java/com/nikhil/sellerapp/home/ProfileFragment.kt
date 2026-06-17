@@ -18,6 +18,7 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
+import com.google.android.material.transition.MaterialFadeThrough
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
@@ -66,6 +67,8 @@ class ProfileFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enterTransition = MaterialFadeThrough()
+        exitTransition = MaterialFadeThrough()
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -166,6 +169,7 @@ class ProfileFragment : Fragment() {
         try {
             startActivity(intent)
         } catch (e: ActivityNotFoundException) {
+            if (!isAdded) return
             Toast.makeText(requireContext(), "No email app found. Contact us at support.skillvedika@gmail.com", Toast.LENGTH_LONG).show()
         }
     }
@@ -324,7 +328,7 @@ class ProfileFragment : Fragment() {
             .apply()
 
         binding.root.postDelayed({
-            if (_binding == null) return@postDelayed
+            if (_binding == null || !isAdded) return@postDelayed
             TapTargetView.showFor(
                 requireActivity(),
                 TapTarget.forBounds(
@@ -409,6 +413,7 @@ class ProfileFragment : Fragment() {
             try {
                 bucket.uploadAsFlow(fileName, byteArray).collect { status ->
                     withContext(Dispatchers.Main) {
+                        if (_binding == null) return@withContext
                         when (status) {
                             is UploadStatus.Progress -> Log.d("Upload", "In progress...")
                             is UploadStatus.Success -> {
@@ -437,6 +442,7 @@ class ProfileFragment : Fragment() {
             db.collection("Users").document(currentUser.uid)
                 .update("profilePictureUrl", imageUrl)
                 .addOnSuccessListener {
+                    if (_binding == null || !isAdded) return@addOnSuccessListener
                     Toast.makeText(requireContext(), "Profile image updated!", Toast.LENGTH_SHORT).show()
                     Glide.with(this)
                         .load(imageUrl)
@@ -444,6 +450,7 @@ class ProfileFragment : Fragment() {
                         .into(binding.profileImage)
                 }
                 .addOnFailureListener { e ->
+                    if (_binding == null || !isAdded) return@addOnFailureListener
                     Toast.makeText(requireContext(), "Failed to update image: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
         } catch (e: Exception) {

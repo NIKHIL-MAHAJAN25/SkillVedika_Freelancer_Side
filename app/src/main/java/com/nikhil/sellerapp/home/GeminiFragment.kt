@@ -99,6 +99,7 @@ class GeminiFragment : Fragment() {
                 inputstream?.close()
                 withContext(Dispatchers.Main)
                 {
+                    if (_binding == null) return@withContext
                     binding.progressBar.visibility = View.GONE
                     extracted = fulltext
                     binding.tvFileName.text = "Resume loaded"
@@ -107,6 +108,7 @@ class GeminiFragment : Fragment() {
             } catch (e: Exception) {
                 withContext(Dispatchers.Main)
                 {
+                    if (_binding == null) return@withContext
                     binding.progressBar.visibility = View.GONE
                     binding.tvFileName.text = "Error reading PDF"
                     e.printStackTrace()
@@ -125,6 +127,7 @@ class GeminiFragment : Fragment() {
         lifecycleScope.launch {
             // Call our Object (Step 1 code)
             val jsonResponse = GeminiClient.analyzeresume(resume, job)
+            if (_binding == null) return@launch
 
             binding.progressBar.visibility = View.GONE
             binding.btnAnalyze.isEnabled = true
@@ -137,6 +140,7 @@ class GeminiFragment : Fragment() {
         }
     }
     private fun parseAndShowResult(rawJson: String) {
+        if (_binding == null) return
         try {
             // A. Clean the string (Gemini sometimes adds ```json markers)
             val cleanJson = rawJson.replace("```json", "")

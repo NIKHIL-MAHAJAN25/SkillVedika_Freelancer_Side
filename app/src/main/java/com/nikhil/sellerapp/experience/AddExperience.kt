@@ -195,6 +195,7 @@ class AddExperience : Fragment() {
                 call: Call<List<Brandname>>,
                 response: Response<List<Brandname>>
             ) {
+                if (_binding == null) return
                 if (response.isSuccessful) {
                     val brandResults = response.body().orEmpty()
                     arradapter.clear()
@@ -214,6 +215,7 @@ class AddExperience : Fragment() {
         val apiKey="Bearer ${BuildConfig.BRANDFETCH_API_KEY}"
         RetroBrand.instance.getbrand(domain,apiKey).enqueue(object : Callback<BrandResponse>{
             override fun onResponse(call: Call<BrandResponse>, response: Response<BrandResponse>) {
+                if (_binding == null || !isAdded) return
                 if(response.isSuccessful){
                     val url=response.body()?.logos?.firstOrNull()?.formats?.firstOrNull()?.src
                     companylogo=url
@@ -322,9 +324,11 @@ class AddExperience : Fragment() {
         )
         if (uid != null) {
             db.collection("Freelancers").document(uid).update("experience",FieldValue.arrayUnion(details)).addOnSuccessListener {
+                if (_binding == null) return@addOnSuccessListener
                 showtoast("Details saved")
                 findNavController().navigateUp()
             }.addOnFailureListener {
+                if (_binding == null) return@addOnFailureListener
                 showtoast("Error saving details")
             }
         }
@@ -332,7 +336,8 @@ class AddExperience : Fragment() {
     }
 
     private fun showtoast(message:String){
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+        val b = _binding ?: return
+        Snackbar.make(b.root, message, Snackbar.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {

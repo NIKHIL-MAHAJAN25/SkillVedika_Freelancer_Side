@@ -89,6 +89,8 @@ class OrderFragment : Fragment() {
                 cancelProject(project)
             },
             onLeaveReview = { project ->
+                if (!isAdded || _binding == null) return@OrderAdapter
+
                 val bundle = Bundle().apply {
                     putString("uid", project.clientuid ?: "")
                     putString("freeName", project.freename ?: "Freelancer")

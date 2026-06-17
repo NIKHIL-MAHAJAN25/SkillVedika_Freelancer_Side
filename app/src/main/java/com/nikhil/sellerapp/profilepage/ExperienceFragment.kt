@@ -117,6 +117,8 @@ class ExperienceFragment : Fragment() {
     private fun startlisten() {
         if (uid != null) {
             db.collection("Freelancers").document(uid).addSnapshotListener { snapshot, error ->
+                if (_binding == null) return@addSnapshotListener
+
                 if (error != null) {
                     Log.e("Firestore Error", "Listen failed.", error)
                     return@addSnapshotListener
@@ -125,7 +127,16 @@ class ExperienceFragment : Fragment() {
                     val freelancer=snapshot.toObject(Freelancer::class.java)
                     val newexp=freelancer?.experience?: emptyList()
                     adapterr.updateData(newexp)
+                    if (newexp.isEmpty()) {
+                        binding.emptyState.visibility = View.VISIBLE
+                        binding.recycler.visibility = View.GONE
+                    } else {
+                        binding.emptyState.visibility = View.GONE
+                        binding.recycler.visibility = View.VISIBLE
+                    }
                 }else{
+                    binding.emptyState.visibility = View.VISIBLE
+                    binding.recycler.visibility = View.GONE
                     Log.d("Firestore Info", "Current data: null")
 
                 }

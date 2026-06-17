@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.transition.MaterialFadeThrough
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
@@ -50,6 +51,8 @@ class SearchFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enterTransition = MaterialFadeThrough()
+        exitTransition = MaterialFadeThrough()
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -168,6 +171,7 @@ class SearchFragment : Fragment() {
             onContactClicked = { project ->
                 db.collection("Users").document(project.clientuid).get()
                     .addOnSuccessListener { doc ->
+                        if (!isAdded || _binding == null) return@addOnSuccessListener
                         val image = doc.getString("profilePictureUrl") ?: ""
                         val bundle = Bundle().apply {
                             putString("receiverUid", project.clientuid)
@@ -190,12 +194,14 @@ class SearchFragment : Fragment() {
     }
 
     private fun toggleSearch(isSearching: Boolean) {
+        val b = _binding ?: return
+
         if (isSearching) {
-            binding.homeContentGroup.visibility = View.GONE
-            binding.rvSearchResults.visibility = View.VISIBLE
+            b.homeContentGroup.visibility = View.GONE
+            b.rvSearchResults.visibility = View.VISIBLE
         } else {
-            binding.homeContentGroup.visibility = View.VISIBLE
-            binding.rvSearchResults.visibility = View.GONE
+            b.homeContentGroup.visibility = View.VISIBLE
+            b.rvSearchResults.visibility = View.GONE
         }
     }
 
@@ -209,6 +215,8 @@ class SearchFragment : Fragment() {
             onContactClicked = { project ->
                 db.collection("Users").document(project.clientuid).get()
                     .addOnSuccessListener { doc ->
+                        if (_binding == null || !isAdded) return@addOnSuccessListener
+
                         Log.d("CLIENT_UID", project.clientuid)
                         Log.d("DOC_EXISTS", doc.exists().toString())
                         Log.d("FULL_DOC", doc.data.toString())
@@ -223,6 +231,8 @@ class SearchFragment : Fragment() {
                     }
             },
             onProfileClicked = { clientUid ->
+                if (_binding == null || !isAdded) return@JobAdapter
+
                 val bundle = Bundle().apply { putString("uid", clientUid) }
                 findNavController().navigate(R.id.ClientProfile, bundle)
             }
@@ -271,6 +281,7 @@ class SearchFragment : Fragment() {
 
     private fun loadinfo() {
         db.collection("Skills").addSnapshotListener { snapshot, error ->
+            if (_binding == null) return@addSnapshotListener
             if (error != null) return@addSnapshotListener
             if(snapshot != null && !snapshot.isEmpty){
 
