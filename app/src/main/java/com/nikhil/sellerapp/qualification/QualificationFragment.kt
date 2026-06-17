@@ -190,9 +190,13 @@ private fun saveinfo(){
     if(uid!=null){
 
         db.collection("Freelancers").document(uid).update("qualification",FieldValue.arrayUnion(details)).addOnSuccessListener {
+            if (_binding == null || !isAdded) return@addOnSuccessListener
+
             showtoast("Details Saved")
             findNavController().navigateUp()
         }.addOnFailureListener {
+            if (_binding == null || !isAdded) return@addOnFailureListener
+
             showtoast("Error saving details")
         }
     }
@@ -217,7 +221,8 @@ private fun saveinfo(){
             }
     }
     private fun showtoast(message:String){
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+        val b = _binding ?: return
+        Snackbar.make(b.root, message, Snackbar.LENGTH_SHORT).show()
     }
     override fun onDestroyView() {
         super.onDestroyView()

@@ -137,10 +137,13 @@ class SkillsFragment : Fragment() {
         }
         batch.commit()
             .addOnSuccessListener {
+                if (_binding == null || !isAdded) return@addOnSuccessListener
+
                 showSnackbar("${category.categoryName} skills removed")
                 loadskills()
             }
             .addOnFailureListener {
+                if (_binding == null || !isAdded) return@addOnFailureListener
                 showSnackbar("Failed to remove skills")
             }
     }
@@ -151,6 +154,8 @@ class SkillsFragment : Fragment() {
       }
         db.collection("Freelancers").document(uid).get()
             .addOnSuccessListener { document->
+                val b = _binding ?: return@addOnSuccessListener
+
                 if(document.exists()){
                     val free=document.toObject<Freelancer>()
                     val flatskilllist=free?.skills?: emptyList()
@@ -222,9 +227,16 @@ class SkillsFragment : Fragment() {
             }
             .show()
     }
-    private fun showSnackbar(message:String){
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+    private fun showSnackbar(message: String) {
+        val b = _binding ?: return
+        Snackbar.make(b.root, message, Snackbar.LENGTH_SHORT).show()
     }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+
 
 
 }

@@ -149,9 +149,11 @@ class EditFragment : Fragment() {
     private fun updatefreelancer(details:Map<String, Any>){
         if(uid!=null){
             db.collection("Freelancers").document(uid).update(details).addOnSuccessListener {
+                if (_binding == null || !isAdded) return@addOnSuccessListener
                 showtoast("Data Updated")
 
             }.addOnFailureListener {
+                if (_binding == null || !isAdded) return@addOnFailureListener
                 showtoast("Data Could not be updated")
             }
         }
@@ -160,9 +162,11 @@ class EditFragment : Fragment() {
     private fun updateuser(details:Map<String, String>){
         if(uid!=null){
             db.collection("Users").document(uid).update(details).addOnSuccessListener {
+                if (_binding == null || !isAdded) return@addOnSuccessListener
                 showtoast("Data Updated")
 
             }.addOnFailureListener {
+                if (_binding == null || !isAdded) return@addOnFailureListener
                 showtoast("Data Could not be updated")
             }
         }
@@ -208,8 +212,9 @@ class EditFragment : Fragment() {
             }
         }
     }
-    private fun showtoast(message:String){
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+    private fun showtoast(message: String) {
+        val b = _binding ?: return
+        Snackbar.make(b.root, message, Snackbar.LENGTH_SHORT).show()
     }
     override fun onDestroyView() {
         super.onDestroyView()

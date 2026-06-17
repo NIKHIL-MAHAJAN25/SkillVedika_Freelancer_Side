@@ -106,6 +106,8 @@ class BasicFragment : Fragment() {
                 com.google.firebase.firestore.FieldValue.arrayRemove(cert)
             )
             .addOnSuccessListener {
+                if (_binding == null || !isAdded) return@addOnSuccessListener
+
                 Log.d("DELETE", "Experience removed")
                 Toast.makeText(requireContext(), "Certificate Removed", Toast.LENGTH_SHORT).show()
             }
@@ -124,10 +126,13 @@ class BasicFragment : Fragment() {
                 com.google.firebase.firestore.FieldValue.arrayRemove(qual)
             )
             .addOnSuccessListener {
+                if (_binding == null) return@addOnSuccessListener
                 Log.d("DELETE", "Experience removed")
                 Toast.makeText(requireContext(), "Qualification Removed", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener {
+                if (_binding == null) return@addOnFailureListener
+
                 Log.e("DELETE", "Failed", it)
             }
     }
@@ -159,6 +164,9 @@ class BasicFragment : Fragment() {
 
                 .addSnapshotListener { snapshot, error ->
 
+
+                    if (_binding == null) return@addSnapshotListener
+
                     if (error != null) {
 
                         Log.e(
@@ -170,7 +178,6 @@ class BasicFragment : Fragment() {
                         return@addSnapshotListener
                     }
 
-                    if (_binding == null) return@addSnapshotListener
 
                     if (snapshot != null && snapshot.exists()) {
 
@@ -227,6 +234,8 @@ class BasicFragment : Fragment() {
     private fun startlistencert(){
         if(uid!=null){
             db.collection("Freelancers").document(uid).addSnapshotListener{snapshot,error->
+                if (_binding == null) return@addSnapshotListener
+
                 if(error!=null){
                     Log.e("Firestore error","Listen failed",error)
                     return@addSnapshotListener
@@ -245,6 +254,8 @@ class BasicFragment : Fragment() {
 private fun startlisten(){
     if(uid!=null){
         db.collection("Freelancers").document(uid).addSnapshotListener{snapshot,error->
+            if (_binding == null) return@addSnapshotListener
+
             if(error!=null){
                 Log.e("Firestore error","Listen failed",error)
                 return@addSnapshotListener

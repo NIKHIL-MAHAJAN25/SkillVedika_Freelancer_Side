@@ -72,6 +72,7 @@ class ExperienceFragment : Fragment() {
 
 
         binding.btnAddtask.setOnClickListener {
+
             findNavController().navigate(R.id.action_prof_to_exp)//you can define actions to go from district()experience to a main city defined in nav_graph
         }
 
@@ -87,10 +88,13 @@ class ExperienceFragment : Fragment() {
                 com.google.firebase.firestore.FieldValue.arrayRemove(exp)
             )
             .addOnSuccessListener {
+                if (_binding == null) return@addOnSuccessListener
                 Log.d("DELETE", "Experience removed")
                 Toast.makeText(requireContext(), "Profile updated", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener {
+                if (_binding == null) return@addOnFailureListener
+
                 Log.e("DELETE", "Failed", it)
             }
     }

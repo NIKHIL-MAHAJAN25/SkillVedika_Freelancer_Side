@@ -48,7 +48,8 @@ class ProjectDisplay : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        skill=requireArguments().getString("skill")!!
+        skill = requireArguments().getString("skill")
+            ?: throw IllegalArgumentException("Skill missing")
         Log.e("DEBUG","${skill}")
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
@@ -83,6 +84,8 @@ class ProjectDisplay : Fragment() {
     {
         projadapter= JobAdapter(onContactClicked =  {  project ->
             db.collection("Users").document(project.clientuid).get().addOnSuccessListener { doc->
+                if (_binding == null || !isAdded) return@addOnSuccessListener
+
                 Log.d("CLIENT_UID", project.clientuid)
 
                 Log.d("DOC_EXISTS", doc.exists().toString())
@@ -107,6 +110,8 @@ class ProjectDisplay : Fragment() {
             }
         },
             onProfileClicked = { clientUid ->
+                if (_binding == null || !isAdded) return@JobAdapter
+
 
                 val bundle = Bundle().apply {
 
@@ -145,9 +150,9 @@ class ProjectDisplay : Fragment() {
                 val projects = snapshot.toObjects(Project::class.java)
                 projadapter.submitList(null) {
                     projadapter.submitList(projects) {
-                        // Force UI refresh
-                        binding.recyclerquery.post {
-                            binding.recyclerquery.requestLayout()
+                        val b = _binding ?: return@submitList
+                        b.recyclerquery.post {
+                            b.recyclerquery.requestLayout()
                         }
                     }
                 }
@@ -168,7 +173,8 @@ class ProjectDisplay : Fragment() {
 
     }
     private fun showSnackbar(message:String){
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+        val b =_binding?:return
+        Snackbar.make(b.root, message, Snackbar.LENGTH_SHORT).show()
     }
     companion object {
         /**
