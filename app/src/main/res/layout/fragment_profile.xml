@@ -84,6 +84,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/hguide1"
         android:text=""
+        android:maxLines="2"
+        android:ellipsize="end"
         android:textColor="@color/black"
         android:layout_marginTop="35dp"
         android:textSize="25sp"
@@ -92,10 +94,13 @@
         />
     <TextView
         android:id="@+id/tvtitle"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/tvname"
+        app:layout_constraintEnd_toStartOf="@+id/vguide2"
         android:textStyle="bold"
+        android:ellipsize="end"
+        android:maxLines="2"
         android:textSize="15sp"
         android:layout_marginStart="13dp"
         app:layout_constraintStart_toEndOf="@+id/profileImage"

@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.firestore
 import com.nikhil.sellerapp.R
 import com.nikhil.sellerapp.certificate.CertAdapter
@@ -39,6 +40,9 @@ class BasicFragment : Fragment() {
     private val db=Firebase.firestore
     private var flag: Boolean =false
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private var reviewListener: ListenerRegistration? = null
+    private var qualListener: ListenerRegistration? = null
+    private var certListener: ListenerRegistration? = null
     private val uid=auth.currentUser?.uid
     var userlist= arrayListOf<Certification>()
     val qlist= arrayListOf<Qualification>()
@@ -159,7 +163,7 @@ class BasicFragment : Fragment() {
 
         if (uid != null) {
 
-            db.collection("Freelancers")
+            reviewListener = db.collection("Freelancers")
                 .document(uid)
 
                 .addSnapshotListener { snapshot, error ->
@@ -233,7 +237,7 @@ class BasicFragment : Fragment() {
     }
     private fun startlistencert(){
         if(uid!=null){
-            db.collection("Freelancers").document(uid).addSnapshotListener{snapshot,error->
+            certListener = db.collection("Freelancers").document(uid).addSnapshotListener{snapshot,error->
                 if (_binding == null) return@addSnapshotListener
 
                 if(error!=null){
@@ -253,7 +257,7 @@ class BasicFragment : Fragment() {
     }
 private fun startlisten(){
     if(uid!=null){
-        db.collection("Freelancers").document(uid).addSnapshotListener{snapshot,error->
+        qualListener = db.collection("Freelancers").document(uid).addSnapshotListener{snapshot,error->
             if (_binding == null) return@addSnapshotListener
 
             if(error!=null){
@@ -292,7 +296,16 @@ private fun startlisten(){
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        Log.e("LISTENER_DEBUG", "BasicFragment destroyed")
+
+        reviewListener?.remove()
+        qualListener?.remove()
+        certListener?.remove()
+
+        reviewListener = null
+        qualListener = null
+        certListener = null
         _binding=null
+        super.onDestroyView()
     }
 }

@@ -24,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
+import com.nikhil.sellerapp.Login.LoginActivity
 import com.nikhil.sellerapp.MainActivity
 import com.nikhil.sellerapp.R
 import com.nikhil.sellerapp.comprofile.supabasefile
@@ -49,10 +50,13 @@ class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
+    private var userListener: ListenerRegistration? = null
+    private var freelancerListener: ListenerRegistration? = null
 
     private var param1: String? = null
     private var param2: String? = null
-    private var profileListener: ListenerRegistration? = null
+
+
     private lateinit var supabaseClient: SupabaseClient
 
     val auth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -175,6 +179,13 @@ class ProfileFragment : Fragment() {
     }
 
     private fun logout() {
+        Log.e("LISTENER_DEBUG", "Logout clicked")
+        userListener?.remove()
+        freelancerListener?.remove()
+        childFragmentManager.fragments.forEach {
+            childFragmentManager.beginTransaction().remove(it).commitNowAllowingStateLoss()
+        }
+
         auth.signOut()
         navigateToMain()
     }
@@ -254,7 +265,7 @@ class ProfileFragment : Fragment() {
                 }
 
                 // 2. Delete Chats where uid is a participant
-                val chats = db.collection("Chats")
+                val chats = db.collection("Chat")
                     .whereArrayContains("participants", currentUid)
                     .get()
                     .await()
@@ -264,6 +275,7 @@ class ProfileFragment : Fragment() {
                     chunk.forEach { batch.delete(it.reference) }
                     batch.commit().await()
                 }
+
 
                 // 3. Delete Freelancer document
                 db.collection("Freelancers").document(currentUid).delete().await()
@@ -309,7 +321,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun navigateToMain() {
-        val intent = Intent(requireContext(), MainActivity::class.java).apply {
+        val intent = Intent(requireContext(), LoginActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         startActivity(intent)
@@ -369,7 +381,7 @@ class ProfileFragment : Fragment() {
 
     private fun loadotherinfo() {
         if (uid == null) return
-        db.collection("Freelancers").document(uid)
+        freelancerListener = db.collection("Freelancers").document(uid)
             .addSnapshotListener { snapshot, error ->
                 val b = _binding ?: return@addSnapshotListener
                 if (error != null || snapshot == null || !snapshot.exists()) return@addSnapshotListener
@@ -382,7 +394,7 @@ class ProfileFragment : Fragment() {
 
     private fun loadinfo() {
         if (uid == null) return
-        db.collection("Users").document(uid)
+        userListener = db.collection("Users").document(uid)
             .addSnapshotListener { snapshot, error ->
                 val b = _binding ?: return@addSnapshotListener
                 if (error != null || snapshot == null || !snapshot.exists()) return@addSnapshotListener
@@ -473,6 +485,9 @@ class ProfileFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        userListener?.remove()
+        freelancerListener?.remove()
+
         _binding = null
     }
 

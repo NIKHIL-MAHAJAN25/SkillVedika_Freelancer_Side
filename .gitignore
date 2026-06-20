@@ -1,6 +1,9 @@
 *.iml
 .gradle
-.jks
+*.jks
+*.keystore
+*.aab
+*.apk
 /local.properties
 /.idea/caches
 /.idea/libraries

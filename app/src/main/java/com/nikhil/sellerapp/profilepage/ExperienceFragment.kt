@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import com.nikhil.sellerapp.R
@@ -37,6 +38,7 @@ class ExperienceFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     lateinit var adapterr:ExpAdapter
+    private var expListener: ListenerRegistration? = null
     var userlist= arrayListOf<Experience>()
     private val binding get()=_binding!!
     val db= Firebase.firestore
@@ -120,7 +122,7 @@ class ExperienceFragment : Fragment() {
     }
     private fun startlisten() {
         if (uid != null) {
-            db.collection("Freelancers").document(uid).addSnapshotListener { snapshot, error ->
+            expListener = db.collection("Freelancers").document(uid).addSnapshotListener { snapshot, error ->
                 if (_binding == null) return@addSnapshotListener
 
                 if (error != null) {
@@ -149,7 +151,11 @@ class ExperienceFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        Log.e("LISTENER_DEBUG", "ExperienceFragment destroyed")
+        expListener?.remove()
+        expListener = null
+        _binding = null
         super.onDestroyView()
-        _binding=null
+
     }
 }
