@@ -158,7 +158,7 @@
                 android:id="@+id/homeContentGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:constraint_referenced_ids="tvpps,recyclerservices,tvrecent,recyclerjobs,seealljobs" />
+                app:constraint_referenced_ids="tvpps,recyclerservices,tvrecent,recyclerjobs" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

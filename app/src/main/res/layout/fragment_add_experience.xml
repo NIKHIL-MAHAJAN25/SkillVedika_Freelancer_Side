@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:fillViewport="true"
+    tools:context=".experience.AddExperience">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/bg"
     tools:context=".experience.AddExperience">
 
@@ -310,7 +317,7 @@
 
         android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@+id/tvdesc2"
-        app:layout_constraintBottom_toTopOf="@+id/hguide2"
+        android:layout_marginTop="15dp"
         app:layout_constraintEnd_toStartOf="@+id/vguide2"
         app:layout_constraintStart_toEndOf="@+id/vguide1"
         android:backgroundTint="#698B6A"/>
@@ -320,3 +327,4 @@
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

@@ -37,6 +37,11 @@ class HomeActivity : AppCompatActivity() {
             v.setPadding(0, statusBars.top, 0, 0)
             insets
         }
+        ViewCompat.setOnApplyWindowInsetsListener(binding.host) { v, insets ->
+            val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            v.setPadding(0, 0, 0, imeHeight)
+            insets
+        }
 
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.host) as NavHostFragment

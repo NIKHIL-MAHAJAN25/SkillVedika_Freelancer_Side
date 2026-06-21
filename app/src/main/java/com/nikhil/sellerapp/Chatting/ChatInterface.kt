@@ -80,6 +80,7 @@ class ChatInterface : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         loge("$receiverImage")
         val window = requireActivity().window
 
@@ -99,13 +100,13 @@ class ChatInterface : Fragment() {
             insets
         }
 
-        // Bottom input moves with keyboard
-        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomInputLayout) { v, windowInsets ->
-            val imeInsets = windowInsets.getInsets(WindowInsetsCompat.Type.ime())
-            val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(v.paddingLeft, v.paddingTop, v.paddingRight, maxOf(imeInsets.bottom, systemBars.bottom))
-            windowInsets
-        }
+//        // Bottom input moves with keyboard
+//        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomInputLayout) { v, windowInsets ->
+//            val imeInsets = windowInsets.getInsets(WindowInsetsCompat.Type.ime())
+//            val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+//            v.setPadding(v.paddingLeft, v.paddingTop, v.paddingRight, maxOf(imeInsets.bottom, systemBars.bottom))
+//            windowInsets
+//        }
         setupinfo()
         setupRecycler()
         listenForMessages()

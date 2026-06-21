@@ -11,6 +11,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.nikhil.sellerapp.Signup.SignUpActivity
+import com.nikhil.sellerapp.comprofile.Entercode
 import com.nikhil.sellerapp.databinding.ActivityMainBinding
 import com.nikhil.sellerapp.home.HomeActivity
 import kotlinx.coroutines.delay
@@ -66,31 +67,34 @@ class MainActivity : AppCompatActivity() {
             binding.tvtitlee.animate().alpha(1f).setDuration(300).start()
             binding.tvtitlee2.animate().alpha(1f).setDuration(500).start()
         }
-    }
 
-    override fun onStart() {
-        super.onStart()
 
-        // Get current user (this will be persisted by Firebase if everything is set up correctly)
-        val user = auth.currentUser
-
-        // If user is null -> not signed in -> go to SignUpActivity
-        if (user == null) {
-            navigateTo(SignUpActivity::class.java)
-            return
-        }
-
-        // If user exists, check profile completion in Firestore and route accordingly
         lifecycleScope.launch {
-            val uid = user.uid
-            val profComplete = check(uid) // returns true/false (never null)
-            val destClass = if (profComplete) HomeActivity::class.java else SignUpActivity::class.java
 
-            // Optional splash delay for animation; adjust or remove as desired
             delay(3500L)
-            navigateTo(destClass)
+
+            val user = auth.currentUser
+
+            if (user == null) {
+                navigateTo(SignUpActivity::class.java)
+                return@launch
+            }
+
+            val status = checkAccountStatus(user.uid)
+
+            val destination = when {
+                !status.profileComplete -> SignUpActivity::class.java
+                !status.approved -> Entercode::class.java
+                else -> HomeActivity::class.java
+            }
+
+            navigateTo(destination)
         }
     }
+
+
+
+
 
     // Centralized navigation helper that clears the activity stack
     private fun navigateTo(destClass: Class<*>) {
@@ -99,16 +103,21 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+    private data class AccountStatus(
+        val profileComplete: Boolean,
+        val approved: Boolean
+    )
 
     // Check function returns boolean (false on any problem) — easier to reason about
-    private suspend fun check(uid: String): Boolean {
+    private suspend fun checkAccountStatus(uid: String): AccountStatus {
         return try {
             val document = db.collection("Users").document(uid).get().await()
-            // safely return boolean; if field is missing default to false
-            document.getBoolean("profilecomplete") ?: false
+            AccountStatus(
+                profileComplete = document.getBoolean("profilecomplete") ?: false,
+                approved = document.getBoolean("approved") ?: false
+            )
         } catch (e: Exception) {
-
-            false
+            AccountStatus(profileComplete = false, approved = false)
         }
     }
 }

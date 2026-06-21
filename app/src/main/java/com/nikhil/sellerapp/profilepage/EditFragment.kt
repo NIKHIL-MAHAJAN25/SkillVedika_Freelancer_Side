@@ -76,6 +76,9 @@ class EditFragment : Fragment() {
         loadadapter()
         loadinfo()
         loadotherinfo()
+        binding.imgbt.setOnClickListener {
+            findNavController().navigateUp()
+        }
         binding.tvprim.setOnClickListener {
             binding.etprim.showDropDown()
         }
