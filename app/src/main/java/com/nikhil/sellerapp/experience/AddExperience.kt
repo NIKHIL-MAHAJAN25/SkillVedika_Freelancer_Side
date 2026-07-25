@@ -223,7 +223,7 @@ class AddExperience : Fragment() {
                         Glide.with(requireContext())
                             .load(url)
                             .placeholder(R.drawable.outline_image_24)
-                            .error(R.drawable.baseline_error_24)
+                            .error(R.drawable.svcompp)
                             .into(binding.compimage)
 
                     }

@@ -47,6 +47,7 @@
 # ---- OkHttp ----
 -dontwarn okhttp3.**
 -dontwarn okio.**
+-dontwarn org.slf4j.impl.StaticLoggerBinder
 # Firestore POJO serialization — keep all data classes intact
 -keepclassmembers class com.nikhil.sellerapp.dataclasses.** {
     *;

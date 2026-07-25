@@ -1,4 +1,6 @@
 package com.nikhil.sellerapp.GeminiClient
-
-class GemResponse {
-}
+data class GemResponse(
+    val score:Int,
+    val missing_keywords:List<String>,
+    val summary:String
+)

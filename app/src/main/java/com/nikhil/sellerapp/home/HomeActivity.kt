@@ -61,7 +61,7 @@ class HomeActivity : AppCompatActivity() {
         val prefs = getSharedPreferences("hints", MODE_PRIVATE)
         binding.root.post {
             lifecycleScope.launch {
-                delay(3000)
+                delay(1500)
                 showHintsInSequence(prefs)
             }
         }

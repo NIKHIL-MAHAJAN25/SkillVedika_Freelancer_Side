@@ -22,7 +22,7 @@ class ExpAdapter( val list:MutableList<Experience>, private val onDeleteClick:(E
 
                 .load(item.cologo)
                 .circleCrop()
-                .placeholder(R.drawable.baseline_error_24)
+                .placeholder(R.drawable.svcompp)
                 .into(binding.imgCompanyLogo)
             binding.btnDelete.setOnClickListener {
                 onDeleteClick(item)

@@ -24,7 +24,7 @@
             android:id="@+id/imgCompanyLogo"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:background="@drawable/bg_circle"
+            android:background="@drawable/bg_circle_exp"
             android:contentDescription="Company Logo"
             android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"

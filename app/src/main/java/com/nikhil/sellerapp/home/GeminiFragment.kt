@@ -1,23 +1,28 @@
 package com.nikhil.sellerapp.home
 
+import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
-import com.nikhil.sellerapp.R
-import com.nikhil.sellerapp.Utils.GeminiClient
+import com.nikhil.sellerapp.GeminiClient.GemResponse
+import com.nikhil.sellerapp.GeminiClient.ResumeRequest
+
 import com.nikhil.sellerapp.Utils.snack
 import com.nikhil.sellerapp.databinding.FragmentGeminiBinding
+import com.nikhil.sellerapp.mailretro.Retromail
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.text.PDFTextStripper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
+
+import retrofit2.awaitResponse
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -33,7 +38,9 @@ class GeminiFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var _binding: FragmentGeminiBinding? = null
     private val binding get() = _binding!!
-    private var extracted: String = ""
+    private var extracted = ""
+    private var isAnalyzing = false
+
     private val pdflauncher = registerForActivityResult(
         ActivityResultContracts.OpenDocument()
 
@@ -66,6 +73,19 @@ class GeminiFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+
+            if (isAnalyzing) {
+
+                snack("Analysis in progress. Please wait.")
+
+            } else {
+
+                isEnabled = false
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+
+            }
+        }
         binding.btnUploadPdf.setOnClickListener {
             pdflauncher.launch(arrayOf("application/pdf"))
         }
@@ -84,6 +104,8 @@ class GeminiFragment : Fragment() {
     }
 
     private fun extractext(uri: Uri) {
+        binding.btnAnalyze.isEnabled = false
+        binding.btnUploadPdf.isEnabled = false
         binding.progressBar.visibility = View.VISIBLE
         binding.tvFileName.text = "Reading Pdf"
         binding.tvFileName.visibility = View.VISIBLE
@@ -102,8 +124,18 @@ class GeminiFragment : Fragment() {
                     if (_binding == null) return@withContext
                     binding.progressBar.visibility = View.GONE
                     extracted = fulltext
+                    if (fulltext.isBlank()) {
+                        binding.progressBar.visibility = View.GONE
+                        binding.tvFileName.text = "No readable text found"
+                        binding.btnUploadPdf.isEnabled = true
+                        binding.btnAnalyze.isEnabled = false
+                        snack("This PDF contains no selectable text.")
+                        return@withContext
+                    }
                     binding.tvFileName.text = "Resume loaded"
                     binding.btnUploadPdf.text = "Change pdf"
+                    binding.btnAnalyze.isEnabled = true
+                    binding.btnUploadPdf.isEnabled = true
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main)
@@ -111,6 +143,8 @@ class GeminiFragment : Fragment() {
                     if (_binding == null) return@withContext
                     binding.progressBar.visibility = View.GONE
                     binding.tvFileName.text = "Error reading PDF"
+                    binding.btnUploadPdf.isEnabled = true
+                    binding.btnAnalyze.isEnabled = false
                     e.printStackTrace()
                     snack("Failed to read PDF. Is it password protected?")
 
@@ -120,62 +154,112 @@ class GeminiFragment : Fragment() {
     }
 
     private fun performAnalysis(resume: String, job: String) {
+
+        if (isAnalyzing) return
+
+        isAnalyzing = true
+
         binding.progressBar.visibility = View.VISIBLE
-        binding.resultLayout.visibility = View.GONE // Hide old results
-        binding.btnAnalyze.isEnabled = false // Prevent double clicks
+        binding.resultLayout.visibility = View.GONE
+
+        binding.btnAnalyze.isEnabled = false
+        binding.btnUploadPdf.isEnabled = false
+        binding.etJobDesc.isEnabled = false
+
+        if (isAdded) {
+            requireActivity().requestedOrientation =
+                ActivityInfo.SCREEN_ORIENTATION_LOCKED
+        }
 
         lifecycleScope.launch {
-            // Call our Object (Step 1 code)
-            val jsonResponse = GeminiClient.analyzeresume(resume, job)
-            if (_binding == null) return@launch
 
-            binding.progressBar.visibility = View.GONE
-            binding.btnAnalyze.isEnabled = true
+            try {
 
-            if (jsonResponse != null) {
-                parseAndShowResult(jsonResponse)
-            } else {
-                snack("AI Analysis Failed. Check Internet.")
+                val response = Retromail.instance
+                    .analyzeResume(
+                        ResumeRequest(
+                            resumeText = resume,
+                            jobDesc = job
+                        )
+                    )
+                    .awaitResponse()
+
+                if (_binding == null) return@launch
+
+                if (response.isSuccessful &&
+                    response.body()?.success == true
+                ) {
+
+                    showResult(response.body()!!.data)
+
+                } else {
+
+                    snack("Analysis failed")
+
+                }
+
+            } catch (e: Exception) {
+
+                e.printStackTrace()
+                snack("Network Error")
+
+            } finally {
+
+                isAnalyzing = false
+
+                val binding = _binding
+                if (binding != null) {
+                    binding.progressBar.visibility = View.GONE
+                    binding.btnAnalyze.isEnabled = true
+                    binding.btnUploadPdf.isEnabled = true
+                    binding.etJobDesc.isEnabled = true
+                }
+
+                if (isAdded) {
+                    requireActivity().requestedOrientation =
+                        ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                }
             }
         }
     }
-    private fun parseAndShowResult(rawJson: String) {
+
+
+
+
+
+    private fun showResult(result: GemResponse) {
+
         if (_binding == null) return
-        try {
-            // A. Clean the string (Gemini sometimes adds ```json markers)
-            val cleanJson = rawJson.replace("```json", "")
-                .replace("```", "")
-                .trim()
 
-            // B. Parse into JSON Object
-            val obj = JSONObject(cleanJson)
+        binding.resultLayout.visibility = View.VISIBLE
 
-            // C. Extract Data
-            val score = obj.optInt("score", 0)
-            val feedback = obj.optString("summary", "No feedback provided.")
+        binding.tvScore.text =
+            "Match Score: ${result.score}%"
 
-            // D. Update UI
-            binding.resultLayout.visibility = View.VISIBLE
-            binding.tvScore.text = "Match Score: $score%"
-            binding.tvFeedback.text = feedback
+        binding.tvFeedback.text =
+            result.summary
 
-            // E. Color Coding
-            if (score > 75) {
-                binding.tvScore.setTextColor(android.graphics.Color.parseColor("#4CAF50")) // Green
-            } else {
-                binding.tvScore.setTextColor(android.graphics.Color.parseColor("#F44336")) // Red
-            }
+        if (result.score >= 75) {
 
-        } catch (e: Exception) {
-            e.printStackTrace()
-            snack("AI format error. Try again.")
+            binding.tvScore.setTextColor(
+                android.graphics.Color.parseColor("#4CAF50")
+            )
+
+        } else {
+
+            binding.tvScore.setTextColor(
+                android.graphics.Color.parseColor("#F44336")
+            )
+
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
 
 
 

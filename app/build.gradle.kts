@@ -19,13 +19,12 @@ android {
         applicationId = "com.nikhil.sellerapp"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
+        versionCode = 2
         versionName = "1.0"
 
         buildConfigField("String", "SUPABASE_URL", "\"${localProperties.getProperty("SUPABASE_URL")?:""}\"")
         buildConfigField("String", "SUPABASE_KEY", "\"${localProperties.getProperty("SUPABASE_KEY")?:""}\"")
         buildConfigField("String", "BRANDFETCH_API_KEY", "\"${localProperties.getProperty("BRANDFETCH_API_KEY")?:""}\"")
-        buildConfigField("String", "GOOGLE_KEY", "\"${localProperties.getProperty("GOOGLE_KEY")?:""}\"")
 
 
 
@@ -85,8 +84,7 @@ dependencies {
     implementation("io.noties.markwon:core:4.6.2")
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.3")
 
-    // 2. GOOGLE GEMINI AI (Requires Ktor 2)
-    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+
 
     // --- THE NETWORK ENGINE (Ktor 2) ---
     // Everything must match version 2.3.12
