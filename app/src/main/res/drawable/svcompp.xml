@@ -1,0 +1,29 @@
+<!--
+  ~ Copyright (C) 2026 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="640dp"
+    android:height="640dp"
+    android:viewportWidth="480"
+    android:viewportHeight="480">
+  <group>
+    <clip-path
+        android:pathData="M89.91,89.91L389.91,89.91L389.91,389.91L89.91,389.91ZM89.91,89.91"/>
+    <path
+        android:pathData="M239.98,95.3C319.88,95.3 384.65,160.08 384.65,239.98C384.65,319.88 319.88,384.66 239.98,384.66C160.08,384.66 95.3,319.88 95.3,239.98C95.3,160.08 160.08,95.3 239.98,95.3ZM239.98,89.9C157.09,89.9 89.9,157.09 89.9,239.98C89.9,322.87 157.09,390.06 239.98,390.06C322.87,390.06 390.06,322.87 390.06,239.98C390.06,157.09 322.87,89.9 239.98,89.9ZM311.91,173.21L311.91,235.98L294.22,224.55L260.77,245.32L255.14,248.82L251.85,250.86L251.85,154.62L213.84,178.18L213.84,219.58L204.92,213.54L204.92,173.21L260.77,138.59ZM115.07,239.98C115.07,170.99 170.99,115.07 239.98,115.07C308.97,115.07 364.89,170.99 364.89,239.98C364.89,271.86 352.93,300.93 333.28,323L333.28,256.48L294.36,230.14L251.85,256.48L251.85,364.32C247.94,364.68 243.98,364.89 239.98,364.89C235.97,364.89 232.02,364.68 228.11,364.32L228.11,235.29L189.19,208.94L146.68,235.29L146.68,323C127.03,300.93 115.07,271.86 115.07,239.98ZM153.47,239.07L182.4,221.14L182.4,350.82C171.77,345.28 162.04,338.27 153.47,330.04ZM258.64,260.26L287.57,242.34L287.57,355.48C278.42,359.25 268.73,361.98 258.64,363.5ZM102.55,239.98C102.55,315.88 164.08,377.41 239.98,377.41C315.88,377.41 377.41,315.88 377.41,239.98C377.41,164.08 315.88,102.55 239.98,102.55C164.08,102.55 102.55,164.08 102.55,239.98"
+        android:fillColor="#698b6a"
+        android:fillType="nonZero"/>
+  </group>
+</vector>
